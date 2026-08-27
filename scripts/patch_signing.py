@@ -44,24 +44,22 @@ def main():
     )
 
     # 2) Hacer que buildTypes.release use signingConfigs.release
-    #    Buscamos el bloque "release {" dentro de buildTypes y le agregamos la línea
-    def add_signing_ref(match):
-        block = match.group(0)
-        if "signingConfig signingConfigs.release" in block:
-            return block
-        return block.replace(
-            "release {",
+    #    OJO: ya existe un bloque "release {" dentro de signingConfigs (el que
+    #    acabamos de insertar arriba). Por eso buscamos SOLO a partir de la
+    #    palabra "buildTypes", para no tocar por error ese primer bloque.
+    buildtypes_idx = content.index("buildTypes")
+    before = content[:buildtypes_idx]
+    after = content[buildtypes_idx:]
+
+    if "signingConfig signingConfigs.release" not in after:
+        after = re.sub(
+            r"release\s*\{",
             "release {\n            signingConfig signingConfigs.release",
-            1,
+            after,
+            count=1,
         )
 
-    content = re.sub(
-        r"release\s*\{[^}]*\}",
-        add_signing_ref,
-        content,
-        count=1,
-        flags=re.DOTALL,
-    )
+    content = before + after
 
     with open(BUILD_GRADLE, "w") as f:
         f.write(content)
