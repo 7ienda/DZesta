@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DZesta Pro - By AronPR</title>
     <!-- Fuentes: carga desde Google si hay internet, sistema si no -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <style>/* Tailwind CSS v3 - pre-compilado (sin CDN, funciona offline) */
@@ -129,6 +130,20 @@
     </style>
 </head>
 <body>
+
+<!-- ==================== LOGIN OVERLAY ==================== -->
+<div id="login-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+    <img src="https://i.postimg.cc/gcMwqbb6/logo-DZesta.png" style="width:72px;height:72px;margin-bottom:16px;border-radius:20px;" alt="DZesta Logo">
+    <h1 class="text-2xl brand-title" style="color:var(--text);margin-bottom:4px;">DZesta <span class="text-pink-600">Pro</span></h1>
+    <p style="color:var(--subtext);font-size:14px;margin:8px 0 32px;max-width:280px;">Inicia sesión con Google para sincronizar tu lista y presupuesto en la nube</p>
+    <button id="btn-google-login" style="display:flex;align-items:center;gap:10px;background:#fff;color:#1e293b;border:1px solid #e2e8f0;border-radius:14px;padding:13px 26px;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.9 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.3C29.5 35.9 26.9 37 24 37c-5.3 0-9.8-3.4-11.4-8.1l-6.6 5.1C9.5 40.6 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 3-3.1 5.4-5.9 6.9l6.5 5.3C39.6 37.5 44 31.4 44 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
+        Continuar con Google
+    </button>
+    <button id="btn-skip-login" style="margin-top:18px;background:none;border:none;color:var(--subtext);font-size:12px;text-decoration:underline;cursor:pointer;">Usar sin cuenta (solo en este dispositivo)</button>
+    <p id="login-status-msg" style="margin-top:16px;font-size:12px;color:var(--subtext);min-height:16px;"></p>
+</div>
+
 <div class="max-w-lg mx-auto p-4">
 
     <!-- HEADER -->
@@ -149,6 +164,10 @@
             </button>
             <button id="theme-toggle" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400">
                 <span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.2c-6.3-.3-12.6-.4-19-.4z"/></svg></span>
+            </button>
+            <button id="btn-account" onclick="mostrarMenuCuenta()" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400 overflow-hidden" style="display:none;">
+                <img id="account-avatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                <span id="account-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:1em;height:1em"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg></span>
             </button>
         </div>
     </div>
@@ -783,5 +802,235 @@ document.getElementById('input-presupuesto').addEventListener('input', (e) => {
 
 init();
 </script>
+
+<!-- ==================== SUPABASE AUTH + SYNC ==================== -->
+<script>
+(function () {
+    // --- Configuración de tu proyecto Supabase ---
+    const SUPABASE_URL = 'https://jdhfmghrnazyngfsnhhq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkaGZtZ2hybmF6eW5nZnNuaGhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NjEwNzAsImV4cCI6MjEwMzQzNzA3MH0.NRXV1MZI7JVtdSD82ViG-SPMGDXqxSsNALkZ2zh6nQ8';
+    // Esquema de URL personalizado para el "regreso" del login a la app (deep link)
+    const REDIRECT_URL = 'dzestapro://auth-callback';
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+    let syncTimeout = null;
+    let usandoSinCuenta = false;
+
+    const loginOverlay = document.getElementById('login-overlay');
+    const loginStatus = document.getElementById('login-status-msg');
+    const btnAccount = document.getElementById('btn-account');
+    const accountAvatar = document.getElementById('account-avatar');
+    const accountIcon = document.getElementById('account-icon');
+
+    function esNativo() {
+        return window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+    }
+
+    function ocultarLogin() {
+        loginOverlay.style.display = 'none';
+    }
+    function mostrarLogin(msg) {
+        loginOverlay.style.display = 'flex';
+        if (msg) loginStatus.textContent = msg;
+    }
+
+    // --- Botón: continuar sin cuenta (modo local, como antes) ---
+    document.getElementById('btn-skip-login').addEventListener('click', () => {
+        usandoSinCuenta = true;
+        ocultarLogin();
+    });
+
+    // --- Botón: iniciar sesión con Google ---
+    document.getElementById('btn-google-login').addEventListener('click', async () => {
+        loginStatus.textContent = 'Abriendo Google...';
+        try {
+            if (esNativo()) {
+                const { Browser } = window.Capacitor.Plugins;
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: REDIRECT_URL, skipBrowserRedirect: true }
+                });
+                if (error) throw error;
+                await Browser.open({ url: data.url });
+            } else {
+                // Fallback si se abre en un navegador normal (para probar en PC)
+                await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin }
+                });
+            }
+        } catch (e) {
+            loginStatus.textContent = 'Error al abrir Google, intenta de nuevo.';
+            console.error(e);
+        }
+    });
+
+    // --- Escuchar el regreso del navegador a la app (deep link) ---
+    if (esNativo()) {
+        const { App, Browser } = window.Capacitor.Plugins;
+        App.addListener('appUrlOpen', async ({ url }) => {
+            if (!url || url.indexOf('auth-callback') === -1) return;
+            try {
+                await Browser.close();
+            } catch (e) {}
+            const hashIndex = url.indexOf('#');
+            if (hashIndex === -1) {
+                loginStatus.textContent = 'No se recibió sesión de Google.';
+                return;
+            }
+            const params = new URLSearchParams(url.substring(hashIndex + 1));
+            const access_token = params.get('access_token');
+            const refresh_token = params.get('refresh_token');
+            if (access_token && refresh_token) {
+                loginStatus.textContent = 'Iniciando sesión...';
+                const { error } = await supabaseClient.auth.setSession({ access_token, refresh_token });
+                if (error) {
+                    loginStatus.textContent = 'Error validando la sesión.';
+                    console.error(error);
+                }
+                // onAuthStateChange se encarga de continuar
+            } else {
+                loginStatus.textContent = 'No se pudo iniciar sesión, intenta de nuevo.';
+            }
+        });
+    }
+
+    // --- Cuando cambia el estado de sesión (login/logout) ---
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (session && session.user) {
+            currentUser = session.user;
+            usandoSinCuenta = false;
+            btnAccount.style.display = 'flex';
+            const foto = currentUser.user_metadata && currentUser.user_metadata.avatar_url;
+            if (foto) {
+                accountAvatar.src = foto;
+                accountAvatar.style.display = 'block';
+                accountIcon.style.display = 'none';
+            }
+            await cargarDatosDeLaNube();
+            ocultarLogin();
+        } else {
+            currentUser = null;
+            btnAccount.style.display = 'none';
+        }
+    });
+
+    // --- Al cargar la app: revisar si ya había una sesión activa ---
+    (async function checkSesionInicial() {
+        const { data } = await supabaseClient.auth.getSession();
+        if (data && data.session) {
+            // onAuthStateChange se dispara solo, no hace falta nada más aquí
+        } else {
+            mostrarLogin('');
+        }
+    })();
+
+    // --- Cargar productos/presupuesto/listas desde Supabase al iniciar sesión ---
+    async function cargarDatosDeLaNube() {
+        try {
+            const { data: carritoRow } = await supabaseClient
+                .from('carrito')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .maybeSingle();
+
+            if (carritoRow) {
+                productos = carritoRow.productos || [];
+                presupuesto = parseFloat(carritoRow.presupuesto) || 0;
+            } else {
+                // Primera vez de este usuario: sube lo que tenía localmente (si algo tenía)
+                await supabaseClient.from('carrito').upsert({
+                    user_id: currentUser.id,
+                    productos: productos,
+                    presupuesto: presupuesto
+                });
+            }
+
+            const { data: listasRows } = await supabaseClient
+                .from('listas_guardadas')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (listasRows && listasRows.length > 0) {
+                const listasLocal = listasRows.map(r => ({
+                    nombre: r.nombre, fecha: r.fecha, presupuesto: r.presupuesto, productos: r.productos
+                }));
+                localStorage.setItem('listasGuardadasV1', JSON.stringify(listasLocal));
+            }
+
+            document.getElementById('input-presupuesto').value = presupuesto;
+            updateBadge();
+            render();
+        } catch (e) {
+            console.error('Error cargando datos de Supabase:', e);
+        }
+    }
+
+    // --- Subir cambios a Supabase (con un pequeño retraso para no saturar) ---
+    function sincronizarCarritoDebounced() {
+        if (!currentUser) return;
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(async () => {
+            try {
+                await supabaseClient.from('carrito').upsert({
+                    user_id: currentUser.id,
+                    productos: productos,
+                    presupuesto: presupuesto,
+                    updated_at: new Date().toISOString()
+                });
+            } catch (e) {
+                console.error('Error sincronizando carrito:', e);
+            }
+        }, 1000);
+    }
+
+    async function sincronizarListas(arr) {
+        if (!currentUser) return;
+        try {
+            await supabaseClient.from('listas_guardadas').delete().eq('user_id', currentUser.id);
+            if (arr && arr.length > 0) {
+                const rows = arr.map(l => ({
+                    user_id: currentUser.id,
+                    nombre: l.nombre,
+                    fecha: l.fecha,
+                    presupuesto: l.presupuesto,
+                    productos: l.productos
+                }));
+                await supabaseClient.from('listas_guardadas').insert(rows);
+            }
+        } catch (e) {
+            console.error('Error sincronizando listas:', e);
+        }
+    }
+
+    // --- Enganchar la sincronización a las funciones ya existentes de la app ---
+    const _origRender = render;
+    render = function () {
+        _origRender();
+        sincronizarCarritoDebounced();
+    };
+
+    const _origSaveListas = saveListas;
+    saveListas = function (arr) {
+        _origSaveListas(arr);
+        sincronizarListas(arr);
+    };
+
+    // --- Menú simple de cuenta (cerrar sesión) ---
+    window.mostrarMenuCuenta = function () {
+        if (!currentUser) return;
+        const salir = confirm(`Sesión: ${currentUser.email}\n\n¿Quieres cerrar sesión?`);
+        if (salir) {
+            supabaseClient.auth.signOut().then(() => {
+                mostrarLogin('');
+            });
+        }
+    };
+})();
+</script>
+
 </body>
 </html>
