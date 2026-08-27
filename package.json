@@ -1,0 +1,17 @@
+{
+  "name": "dzesta-pro",
+  "version": "1.0.0",
+  "description": "DZesta Pro - App de lista de compras y presupuesto",
+  "scripts": {
+    "sync": "cap sync android",
+    "add-android": "cap add android",
+    "open-android": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
