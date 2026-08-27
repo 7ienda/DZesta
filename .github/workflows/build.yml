@@ -1,7 +1,7 @@
 name: Build Android APK & AAB
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:      # te deja correrlo manualmente desde la pestaña Actions
   push:
     branches: [ main ]
 
@@ -48,6 +48,9 @@ jobs:
 
       - name: Aplicar configuración de firma
         run: python3 scripts/patch_signing.py
+
+      - name: Aplicar configuración de deep link (login con Google)
+        run: python3 scripts/patch_deeplink.py
 
       - name: Compilar APK y AAB firmados
         working-directory: android
