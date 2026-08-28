@@ -158,6 +158,12 @@
             </div>
         </div>
         <div class="flex gap-2">
+            <button onclick="abrirDonacion()" title="Apoyar al desarrollador" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" style="width:1em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg></span>
+            </button>
+            <button id="btn-premium" onclick="abrirModalPremium()" title="Hazte Premium" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-yellow-400">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor" style="width:1.1em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M309 106c11.4-7 19-19.7 19-34c0-22.1-17.9-40-40-40s-40 17.9-40 40c0 14.4 7.6 27 19 34L206.5 220.6c-10.2 15.3-30.9 19.2-45.9 8.7L72 168c5-6.7 8-15 8-24c0-22.1-17.9-40-40-40S0 121.9 0 144s17.9 40 40 40c.2 0 .5 0 .7 0L86.4 356.6C97 384.3 123.6 402.6 153 402.6l270 0c29.4 0 56-18.3 66.6-46L536.9 184c.2 0 .5 0 .7 0c22.1 0 40-17.9 40-40s-17.9-40-40-40s-40 17.9-40 40c0 9 3 17.3 8 24l-88.6 61.3c-15 10.5-35.7 6.6-45.9-8.7L309 106zM153 480c-8.8 0-16 7.2-16 16s7.2 16 16 16l270 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-270 0z"/></svg></span>
+            </button>
             <button onclick="openSavedLists()" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400 relative">
                 <span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:1em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M0 48C0 21.5 21.5 0 48 0l0 48 0 393.4 130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4 336 48 48 48 48 0 336 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.1-16.9 5.9-24.9 1.8S0 497 0 488L0 48z"/></svg></span>
                 <span class="badge absolute -top-1 -right-1" id="badge-listas" style="display:none">0</span>
@@ -165,9 +171,10 @@
             <button id="theme-toggle" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400">
                 <span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.2c-6.3-.3-12.6-.4-19-.4z"/></svg></span>
             </button>
-            <button id="btn-account" onclick="mostrarMenuCuenta()" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400 overflow-hidden" style="display:none;">
+            <button id="btn-account" onclick="mostrarMenuCuenta()" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-pink-400 overflow-hidden relative" style="display:none;">
                 <img id="account-avatar" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
                 <span id="account-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:1em;height:1em"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg></span>
+                <span id="badge-pro" class="badge absolute -top-1 -right-1" style="display:none;background:#f59e0b;">PRO</span>
             </button>
         </div>
     </div>
@@ -345,6 +352,39 @@
             <button onclick="eliminarListaGuardada()" class="flex-1 py-2.5 rounded-xl border border-red-200 text-red-400 font-bold text-sm">
                 <span style="margin-right:0.25rem"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:0.875em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg></span>Eliminar
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Premium -->
+<div class="modal-overlay" id="modal-premium">
+    <div class="modal-box">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-black text-pink-600">⭐ DZesta Premium</h2>
+            <button onclick="closeModal('modal-premium')" class="text-gray-400 text-xl"><span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></span></button>
+        </div>
+        <div id="premium-ya-activo" style="display:none;text-align:center;padding:16px 0;">
+            <p class="text-2xl mb-2">✅</p>
+            <p class="font-bold text-sm">¡Ya eres Premium!</p>
+            <p class="text-xs text-gray-400 mt-1">Tus listas se guardan automáticamente en la nube.</p>
+        </div>
+        <div id="premium-oferta">
+            <p class="text-sm text-gray-500 mb-4">Desbloquea el respaldo automático de tus listas en la nube:</p>
+            <ul class="text-sm space-y-2 mb-5">
+                <li>☁️ Guardado automático de tus listas en la nube</li>
+                <li>📱 Accede a tus listas desde cualquier dispositivo</li>
+                <li>♾️ Listas guardadas ilimitadas</li>
+                <li>🚫 Sin anuncios (si se agregan en el futuro)</li>
+            </ul>
+            <button id="btn-comprar-premium" onclick="comprarPremium()" class="w-full bg-pink-600 text-white font-bold py-3 rounded-xl shadow-md mb-2">
+                Hazte Premium
+            </button>
+            <button onclick="restaurarCompras()" class="w-full text-xs text-gray-400 underline py-2">
+                Ya pagué, restaurar mi compra
+            </button>
+            <p id="premium-web-msg" class="text-center text-xs text-gray-400 mt-2" style="display:none;">
+                Las compras solo están disponibles en la app instalada desde Google Play.
+            </p>
         </div>
     </div>
 </div>
@@ -814,9 +854,17 @@ init();
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // --- RevenueCat (Google Play Billing) ---
+    // TODO: reemplaza esto con tu API Key pública de Android desde el dashboard de RevenueCat
+    const REVENUECAT_API_KEY = 'goog_TU_API_KEY_DE_REVENUECAT';
+    const ENTITLEMENT_PREMIUM = 'premium';
+    // TODO: reemplaza con tu link real de PayPal
+    const PAYPAL_DONATE_URL = 'https://paypal.me/TU_USUARIO_PAYPAL';
+
     let currentUser = null;
     let syncTimeout = null;
     let usandoSinCuenta = false;
+    let isPremium = false;
 
     const loginOverlay = document.getElementById('login-overlay');
     const loginStatus = document.getElementById('login-status-msg');
@@ -835,6 +883,118 @@ init();
         loginOverlay.style.display = 'flex';
         if (msg) loginStatus.textContent = msg;
     }
+
+    // --- Donación PayPal ---
+    window.abrirDonacion = async function () {
+        try {
+            if (esNativo()) {
+                const { Browser } = window.Capacitor.Plugins;
+                await Browser.open({ url: PAYPAL_DONATE_URL });
+            } else {
+                window.open(PAYPAL_DONATE_URL, '_blank');
+            }
+        } catch (e) { console.error('Error abriendo donación:', e); }
+    };
+
+    // --- Premium (Google Play Billing vía RevenueCat) ---
+    function getPurchases() {
+        return esNativo() && window.Capacitor.Plugins.Purchases ? window.Capacitor.Plugins.Purchases : null;
+    }
+
+    async function initPurchases() {
+        const Purchases = getPurchases();
+        if (!Purchases) return;
+        try {
+            await Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+        } catch (e) { console.error('Error configurando RevenueCat:', e); }
+    }
+
+    async function refrescarEstadoPremium() {
+        const Purchases = getPurchases();
+        if (!Purchases) { actualizarUIPremium(); return; }
+        try {
+            const { customerInfo } = await Purchases.getCustomerInfo();
+            isPremium = !!(customerInfo.entitlements.active && customerInfo.entitlements.active[ENTITLEMENT_PREMIUM]);
+        } catch (e) {
+            console.error('Error obteniendo estado premium:', e);
+            isPremium = false;
+        }
+        actualizarUIPremium();
+    }
+
+    function actualizarUIPremium() {
+        const badge = document.getElementById('badge-pro');
+        if (badge) badge.style.display = isPremium ? 'flex' : 'none';
+        const yaActivo = document.getElementById('premium-ya-activo');
+        const oferta = document.getElementById('premium-oferta');
+        if (yaActivo && oferta) {
+            yaActivo.style.display = isPremium ? 'block' : 'none';
+            oferta.style.display = isPremium ? 'none' : 'block';
+        }
+        const webMsg = document.getElementById('premium-web-msg');
+        const btnComprar = document.getElementById('btn-comprar-premium');
+        if (webMsg && btnComprar) {
+            const disponible = !!getPurchases();
+            webMsg.style.display = disponible ? 'none' : 'block';
+            btnComprar.style.display = disponible ? 'block' : 'none';
+        }
+    }
+
+    window.abrirModalPremium = function () {
+        actualizarUIPremium();
+        openModal('modal-premium');
+    };
+
+    window.comprarPremium = async function () {
+        const Purchases = getPurchases();
+        if (!Purchases) {
+            showToast('Las compras solo funcionan en la app de Google Play.', 'warn');
+            return;
+        }
+        if (!currentUser) {
+            showToast('Inicia sesión con Google para hacerte Premium.', 'warn');
+            return;
+        }
+        try {
+            const offerings = await Purchases.getOfferings();
+            const pkg = offerings.current && offerings.current.availablePackages && offerings.current.availablePackages[0];
+            if (!pkg) {
+                showToast('No hay planes disponibles por ahora, intenta más tarde.', 'warn');
+                return;
+            }
+            const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
+            isPremium = !!(customerInfo.entitlements.active && customerInfo.entitlements.active[ENTITLEMENT_PREMIUM]);
+            actualizarUIPremium();
+            if (isPremium) {
+                showToast('⭐ ¡Ahora eres Premium!', 'ok');
+                await cargarDatosDeLaNube();
+            }
+        } catch (e) {
+            if (e && (e.userCancelled || e.code === 'PURCHASE_CANCELLED')) return;
+            console.error('Error en la compra:', e);
+            showToast('No se pudo completar la compra.', 'error');
+        }
+    };
+
+    window.restaurarCompras = async function () {
+        const Purchases = getPurchases();
+        if (!Purchases) {
+            showToast('Disponible solo en la app de Google Play.', 'warn');
+            return;
+        }
+        try {
+            const { customerInfo } = await Purchases.restorePurchases();
+            isPremium = !!(customerInfo.entitlements.active && customerInfo.entitlements.active[ENTITLEMENT_PREMIUM]);
+            actualizarUIPremium();
+            showToast(isPremium ? '⭐ Compra restaurada' : 'No se encontró ninguna compra previa.', isPremium ? 'ok' : 'warn');
+            if (isPremium) await cargarDatosDeLaNube();
+        } catch (e) {
+            console.error('Error restaurando compras:', e);
+            showToast('No se pudo restaurar la compra.', 'error');
+        }
+    };
+
+    initPurchases();
 
     // --- Botón: continuar sin cuenta (modo local, como antes) ---
     document.getElementById('btn-skip-login').addEventListener('click', () => {
@@ -909,11 +1069,22 @@ init();
                 accountAvatar.style.display = 'block';
                 accountIcon.style.display = 'none';
             }
+            const Purchases = getPurchases();
+            if (Purchases) {
+                try { await Purchases.logIn({ appUserID: currentUser.id }); } catch (e) { console.error('Error vinculando RevenueCat:', e); }
+            }
+            await refrescarEstadoPremium();
             await cargarDatosDeLaNube();
             ocultarLogin();
         } else {
             currentUser = null;
+            isPremium = false;
+            actualizarUIPremium();
             btnAccount.style.display = 'none';
+            const Purchases = getPurchases();
+            if (Purchases) {
+                try { await Purchases.logOut(); } catch (e) {}
+            }
         }
     });
 
@@ -929,6 +1100,13 @@ init();
 
     // --- Cargar productos/presupuesto/listas desde Supabase al iniciar sesión ---
     async function cargarDatosDeLaNube() {
+        if (!isPremium) {
+            // Usuarios no Premium: todo se queda solo en este dispositivo (localStorage)
+            document.getElementById('input-presupuesto').value = presupuesto;
+            updateBadge();
+            render();
+            return;
+        }
         try {
             const { data: carritoRow } = await supabaseClient
                 .from('carrito')
@@ -971,7 +1149,7 @@ init();
 
     // --- Subir cambios a Supabase (con un pequeño retraso para no saturar) ---
     function sincronizarCarritoDebounced() {
-        if (!currentUser) return;
+        if (!currentUser || !isPremium) return;
         clearTimeout(syncTimeout);
         syncTimeout = setTimeout(async () => {
             try {
@@ -988,7 +1166,7 @@ init();
     }
 
     async function sincronizarListas(arr) {
-        if (!currentUser) return;
+        if (!currentUser || !isPremium) return;
         try {
             await supabaseClient.from('listas_guardadas').delete().eq('user_id', currentUser.id);
             if (arr && arr.length > 0) {
