@@ -12,7 +12,7 @@
     "@capacitor/core": "^6.1.2",
     "@capacitor/app": "^6.0.1",
     "@capacitor/browser": "^6.0.3",
-    "@revenuecat/purchases-capacitor": "^8.5.0"
+    "@revenuecat/purchases-capacitor": "^9.2.2"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.1.2",
