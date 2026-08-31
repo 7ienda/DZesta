@@ -56,6 +56,8 @@
             padding: 10px; z-index: 50;
         }
         body.dark-mode .tab-bar { background: #1f2937; }
+        /* Espacio para que el banner de AdMob (arriba) no tape el header */
+        body.con-banner-ads .max-w-lg { padding-top: 54px; transition: padding-top 0.2s; }
         input, select {
             background: var(--input) !important;
             border: 1px solid var(--border) !important;
@@ -374,7 +376,7 @@
                 <li>☁️ Guardado automático de tus listas en la nube</li>
                 <li>📱 Accede a tus listas desde cualquier dispositivo</li>
                 <li>♾️ Listas guardadas ilimitadas</li>
-                <li>🚫 Sin anuncios (si se agregan en el futuro)</li>
+                <li>🚫 Sin anuncios</li>
             </ul>
             <button id="btn-comprar-premium" onclick="comprarPremium()" class="w-full bg-pink-600 text-white font-bold py-3 rounded-xl shadow-md mb-2">
                 Hazte Premium
@@ -858,6 +860,10 @@ init();
     // TODO: reemplaza esto con tu API Key pública de Android desde el dashboard de RevenueCat
     const REVENUECAT_API_KEY = 'goog_TU_API_KEY_DE_REVENUECAT';
     const ENTITLEMENT_PREMIUM = 'premium';
+
+    // --- AdMob (anuncios solo para usuarios NO Premium) ---
+    // App ID va en AndroidManifest.xml (scripts/patch_admob.py), aquí solo el/los ID de anuncio.
+    const ADMOB_BANNER_ID = 'ca-app-pub-8050203537758537/5817563725';
     // TODO: reemplaza con tu link real de PayPal
     const PAYPAL_DONATE_URL = 'https://paypal.me/TU_USUARIO_PAYPAL';
 
@@ -865,6 +871,8 @@ init();
     let syncTimeout = null;
     let usandoSinCuenta = false;
     let isPremium = false;
+    let adMobListo = false;
+    let bannerVisible = false;
 
     const loginOverlay = document.getElementById('login-overlay');
     const loginStatus = document.getElementById('login-status-msg');
@@ -878,6 +886,7 @@ init();
 
     function ocultarLogin() {
         loginOverlay.style.display = 'none';
+        actualizarAnuncios();
     }
     function mostrarLogin(msg) {
         loginOverlay.style.display = 'flex';
@@ -938,6 +947,53 @@ init();
             webMsg.style.display = disponible ? 'none' : 'block';
             btnComprar.style.display = disponible ? 'block' : 'none';
         }
+        actualizarAnuncios();
+    }
+
+    // --- AdMob: anuncios (banner) solo para usuarios gratuitos ---
+    function getAdMob() {
+        return esNativo() && window.Capacitor.Plugins.AdMob ? window.Capacitor.Plugins.AdMob : null;
+    }
+
+    async function initAdMob() {
+        const AdMob = getAdMob();
+        if (!AdMob) return;
+        try {
+            await AdMob.initialize({ requestTrackingAuthorization: true });
+            adMobListo = true;
+        } catch (e) { console.error('Error inicializando AdMob:', e); }
+    }
+
+    async function mostrarBanner() {
+        const AdMob = getAdMob();
+        if (!AdMob || !adMobListo || bannerVisible) return;
+        try {
+            await AdMob.showBanner({
+                adId: ADMOB_BANNER_ID,
+                adSize: 'ADAPTIVE_BANNER',
+                position: 'TOP_CENTER',
+                margin: 0,
+                isTesting: false
+            });
+            bannerVisible = true;
+            document.body.classList.add('con-banner-ads');
+        } catch (e) { console.error('Error mostrando banner de AdMob:', e); }
+    }
+
+    async function ocultarBanner() {
+        const AdMob = getAdMob();
+        bannerVisible = false;
+        document.body.classList.remove('con-banner-ads');
+        if (!AdMob) return;
+        try { await AdMob.removeBanner(); } catch (e) {}
+    }
+
+    async function actualizarAnuncios() {
+        if (isPremium) {
+            await ocultarBanner();
+        } else {
+            await mostrarBanner();
+        }
     }
 
     window.abrirModalPremium = function () {
@@ -995,6 +1051,7 @@ init();
     };
 
     initPurchases();
+    initAdMob();
 
     // --- Botón: continuar sin cuenta (modo local, como antes) ---
     document.getElementById('btn-skip-login').addEventListener('click', () => {
