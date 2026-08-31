@@ -55,6 +55,9 @@ jobs:
       - name: Aplicar configuración de deep link (login con Google)
         run: python3 scripts/patch_deeplink.py
 
+      - name: Aplicar App ID de AdMob
+        run: python3 scripts/patch_admob.py
+
       - name: Compilar APK y AAB firmados
         working-directory: android
         env:
