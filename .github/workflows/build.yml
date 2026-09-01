@@ -34,6 +34,9 @@ jobs:
       - name: Actualizar a API 35 (requisito de Google Play)
         run: python3 scripts/patch_targetsdk.py
 
+      - name: Subir versionCode automáticamente
+        run: python3 scripts/patch_version.py
+
       - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
