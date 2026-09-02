@@ -1,6 +1,6 @@
 {
   "appId": "com.aronpr.dzestapro",
-  "appName": "DZesta Pro",
+  "appName": "DZesta",
   "webDir": "www",
   "bundledWebRuntime": false,
   "server": {

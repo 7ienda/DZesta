@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DZesta Pro - By AronPR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>DZesta - By AronPR</title>
     <!-- Fuentes: carga desde Google si hay internet, sistema si no -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,9 +37,21 @@
             color: var(--text);
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             transition: background-color 0.3s, color 0.3s;
-            padding-bottom: 90px;
+            padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
         }
         .brand-title { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700; }
+        .brand-wordmark {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 1.9rem;
+            letter-spacing: 0.3px;
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
         .glass-card {
             background: var(--card-solid);
             border: 1px solid var(--border);
@@ -53,7 +65,8 @@
             background: var(--card-solid);
             border-top: 1px solid var(--border);
             display: flex; justify-content: space-around;
-            padding: 10px; z-index: 50;
+            padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+            z-index: 50;
         }
         body.dark-mode .tab-bar { background: #1f2937; }
         /* Espacio para que el banner de AdMob (arriba) no tape el header */
@@ -92,6 +105,17 @@
         /* Tab activo */
         .tab-btn.active { color: #ec4899 !important; }
         .tab-btn { transition: color 0.2s; color: var(--subtext); }
+
+        /* Interruptor Todos / Categorías */
+        .modo-btn {
+            background: var(--input); border: 1px solid var(--border);
+            color: var(--subtext); transition: all 0.2s;
+        }
+        .modo-btn.active-modo {
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+            color: #fff !important; border-color: transparent;
+            box-shadow: 0 3px 10px rgba(236,72,153,0.35);
+        }
 
         /* Lista de compras guardada items */
         .saved-list-item {
@@ -136,7 +160,7 @@
 <!-- ==================== LOGIN OVERLAY ==================== -->
 <div id="login-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
     <img src="https://i.postimg.cc/gcMwqbb6/logo-DZesta.png" style="width:72px;height:72px;margin-bottom:16px;border-radius:20px;" alt="DZesta Logo">
-    <h1 class="text-2xl brand-title" style="color:var(--text);margin-bottom:4px;">DZesta <span class="text-pink-600">Pro</span></h1>
+    <h1 class="brand-wordmark" style="font-size:2.2rem;margin-bottom:4px;">DZesta</h1>
     <p style="color:var(--subtext);font-size:14px;margin:8px 0 32px;max-width:280px;">Inicia sesión con Google para sincronizar tu lista y presupuesto en la nube</p>
     <button id="btn-google-login" style="display:flex;align-items:center;gap:10px;background:#fff;color:#1e293b;border:1px solid #e2e8f0;border-radius:14px;padding:13px 26px;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.9 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.3C29.5 35.9 26.9 37 24 37c-5.3 0-9.8-3.4-11.4-8.1l-6.6 5.1C9.5 40.6 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 3-3.1 5.4-5.9 6.9l6.5 5.3C39.6 37.5 44 31.4 44 24c0-1.4-.1-2.7-.4-3.5z"/></svg>
@@ -153,9 +177,7 @@
         <div class="flex items-center gap-2">
             <img src="https://i.postimg.cc/gcMwqbb6/logo-DZesta.png" class="logo-img" alt="DZesta Logo" id="logo-img">
 			<div>
-                <h1 class="text-2xl brand-title text-slate-500">
-                    DZesta <span class="text-pink-600 dark:text-pink-400">Pro</span>
-                </h1>
+                <h1 class="brand-wordmark">DZesta</h1>
                 <p class="text-[10px] uppercase font-bold text-pink-300/70 tracking-widest italic">By: AronPR</p>
             </div>
         </div>
@@ -268,11 +290,33 @@
             </form>
         </div>
 
-        <!-- FILTROS -->
-        <div class="flex gap-2 mb-4 overflow-x-auto pb-1" id="filtros-container">
-            <button onclick="setFiltro('todos')" class="filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-pink-600 text-white whitespace-nowrap">Todos</button>
-            <button onclick="setFiltro('pendiente')" class="filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">⬜ Pendientes</button>
-            <button onclick="setFiltro('comprado')" class="filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">✅ Comprados</button>
+        <!-- MODO DE VISTA: Todos / Categorías -->
+        <div class="flex gap-2 mb-3">
+            <button onclick="setVistaFiltro('todos')" id="modo-todos-btn" class="modo-btn active-modo flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wide">Todos</button>
+            <button onclick="setVistaFiltro('categorias')" id="modo-categorias-btn" class="modo-btn flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wide">🗂️ Categorías</button>
+        </div>
+
+        <!-- SUBFILTRO (vista Todos): Todos / Pendientes / Comprados -->
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-1" id="subfiltro-todos">
+            <button onclick="setFiltro('todos')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-pink-600 text-white whitespace-nowrap">Todos</button>
+            <button onclick="setFiltro('pendiente')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">⬜ Pendientes</button>
+            <button onclick="setFiltro('comprado')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">✅ Comprados</button>
+        </div>
+
+        <!-- LISTA DE CATEGORÍAS (vista Categorías, sin categoría elegida aún) -->
+        <div class="flex flex-wrap gap-2 mb-4" id="categorias-lista" style="display:none;"></div>
+
+        <!-- DENTRO DE UNA CATEGORÍA -->
+        <div id="subfiltro-categoria" style="display:none;" class="mb-4">
+            <div class="flex items-center justify-between mb-2 px-1">
+                <button onclick="volverACategorias()" class="text-xs font-bold text-pink-500 flex items-center gap-1">← Categorías</button>
+                <span id="subfiltro-categoria-titulo" class="text-xs font-black uppercase tracking-wide"></span>
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-1" id="subfiltro-categoria-btns">
+                <button onclick="setFiltro('todos')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-pink-600 text-white whitespace-nowrap">Todos</button>
+                <button onclick="setFiltro('pendiente')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">⬜ Pendientes</button>
+                <button onclick="setFiltro('comprado')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">✅ Comprados</button>
+            </div>
         </div>
 
         <!-- LISTA -->
@@ -429,6 +473,8 @@ let productos = JSON.parse(localStorage.getItem('cestaV22')) || [];
 let presupuesto = parseFloat(localStorage.getItem('presV22')) || 100;
 let darkMode = localStorage.getItem('darkV22');
 let filtroActual = 'todos';
+let vistaFiltro = 'todos'; // 'todos' | 'categorias'
+let categoriaActiva = null; // clave de categoría cuando se navega dentro de una
 let listaSeleccionadaIdx = null;
 
 if (darkMode === null) darkMode = true;
@@ -448,6 +494,14 @@ const catEmojis = {
     bebidas:'🥤',congelados:'🧊',embutidos:'🍗',condimentos:'🧂',pastas:'🍝',huevos:'🥚',
     pescados:'🐟',dulces:'🍬',jugos:'🧃',molidos:'☕',limpieza:'🧻',higiene:'🧼',
     mascotas:'🐶',bebe:'👶',farmacia:'💊',ofertas:'⚡',favoritos:'❤️',otros:'📦'
+};
+const catNombres = {
+    despensa:'Despensa',fruta:'Frutas',verdura:'Verduras',carnes:'Carnes',
+    panaderia:'Panadería',snacks:'Snacks',bebidas:'Bebidas',congelados:'Congelados',
+    embutidos:'Embutidos',condimentos:'Condimentos',pastas:'Pastas',huevos:'Huevos',
+    pescados:'Pescados',dulces:'Dulces',jugos:'Jugos',molidos:'Cafés',
+    limpieza:'Limpieza',higiene:'Higiene',mascotas:'Mascotas',bebe:'Bebé',
+    farmacia:'Farmacia',ofertas:'Ofertas',favoritos:'Favoritos',otros:'Otros'
 };
 
 // =================== LISTAS GUARDADAS ===================
@@ -607,14 +661,70 @@ function nuevaListaGuardando() {
 // =================== FILTROS ===================
 function setFiltro(f) {
     filtroActual = f;
-    document.querySelectorAll('.filtro-btn').forEach(btn => {
-        btn.classList.remove('bg-pink-600','text-white');
-        btn.classList.add('bg-white','border','border-pink-200','text-pink-500');
-    });
-    const idx = f === 'todos' ? 0 : f === 'pendiente' ? 1 : 2;
-    const btns = document.querySelectorAll('.filtro-btn');
-    btns[idx].classList.add('bg-pink-600','text-white');
-    btns[idx].classList.remove('bg-white','border','border-pink-200','text-pink-500');
+    // El grupo de botones visible depende de si estamos dentro de una categoría o no
+    const rowId = (vistaFiltro === 'categorias' && categoriaActiva) ? 'subfiltro-categoria-btns' : 'subfiltro-todos';
+    const container = document.getElementById(rowId);
+    if (container) {
+        const btns = container.querySelectorAll('.subfiltro-btn');
+        btns.forEach(btn => {
+            btn.classList.remove('bg-pink-600', 'text-white');
+            btn.classList.add('bg-white', 'border', 'border-pink-200', 'text-pink-500');
+        });
+        const idx = f === 'todos' ? 0 : f === 'pendiente' ? 1 : 2;
+        if (btns[idx]) {
+            btns[idx].classList.add('bg-pink-600', 'text-white');
+            btns[idx].classList.remove('bg-white', 'border', 'border-pink-200', 'text-pink-500');
+        }
+    }
+    render();
+}
+
+function setVistaFiltro(v) {
+    vistaFiltro = v;
+    categoriaActiva = null;
+    filtroActual = 'todos';
+
+    document.getElementById('modo-todos-btn').classList.toggle('active-modo', v === 'todos');
+    document.getElementById('modo-categorias-btn').classList.toggle('active-modo', v === 'categorias');
+
+    document.getElementById('subfiltro-todos').style.display = v === 'todos' ? 'flex' : 'none';
+    document.getElementById('categorias-lista').style.display = v === 'categorias' ? 'flex' : 'none';
+    document.getElementById('subfiltro-categoria').style.display = 'none';
+
+    if (v === 'todos') setFiltro('todos');
+    else { renderCategoriasChips(); render(); }
+}
+
+function renderCategoriasChips() {
+    const cont = document.getElementById('categorias-lista');
+    const presentes = {};
+    productos.forEach(p => { presentes[p.categoria] = (presentes[p.categoria] || 0) + 1; });
+    const keys = Object.keys(presentes);
+    if (keys.length === 0) {
+        cont.innerHTML = `<p class="text-xs opacity-60 px-1">Aún no hay productos agregados</p>`;
+        return;
+    }
+    cont.innerHTML = keys.map(c => `
+        <button onclick="seleccionarCategoria('${c}')" class="cat-chip-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">
+            ${catEmojis[c] || '📦'} ${catNombres[c] || c} <span class="opacity-60">(${presentes[c]})</span>
+        </button>
+    `).join('');
+}
+
+function seleccionarCategoria(cat) {
+    categoriaActiva = cat;
+    document.getElementById('categorias-lista').style.display = 'none';
+    document.getElementById('subfiltro-categoria').style.display = 'block';
+    document.getElementById('subfiltro-categoria-titulo').textContent = `${catEmojis[cat] || '📦'} ${catNombres[cat] || cat}`;
+    setFiltro('todos');
+}
+
+function volverACategorias() {
+    categoriaActiva = null;
+    filtroActual = 'todos';
+    document.getElementById('subfiltro-categoria').style.display = 'none';
+    document.getElementById('categorias-lista').style.display = 'flex';
+    renderCategoriasChips();
     render();
 }
 
@@ -689,6 +799,12 @@ function procesarVoz(f) {
 
 // =================== RENDER ===================
 function render() {
+    // Si estábamos viendo una categoría y ya no tiene productos, regresa a la lista de categorías
+    if (vistaFiltro === 'categorias' && categoriaActiva && !productos.some(p => p.categoria === categoriaActiva)) {
+        volverACategorias();
+        return;
+    }
+
     const listEl = document.getElementById('lista-productos');
     listEl.innerHTML = '';
     let gastado = 0;
@@ -697,6 +813,9 @@ function render() {
 
     productos.forEach((p, i) => {
         if (p.comprado) gastado += parseFloat(p.precio || 0);
+
+        // Filtro por categoría (solo si estamos navegando dentro de una)
+        if (vistaFiltro === 'categorias' && categoriaActiva && p.categoria !== categoriaActiva) return;
 
         // Filtro
         if (filtroActual === 'pendiente' && p.comprado) return;
@@ -709,7 +828,7 @@ function render() {
             <input type="checkbox" ${p.comprado?'checked':''} onchange="toggleComprado(${i})" class="w-5 h-5 accent-pink-500">
             <div class="flex-1 min-w-0">
                 <p class="font-medium text-sm truncate ${p.comprado?'line-through opacity-40':''}">${p.nombre}</p>
-                <p class="text-[9px] opacity-60 font-bold uppercase">${p.cantidad} ${p.unidad} • ${catEmojis[p.categoria]||'📦'} ${p.categoria}</p>
+                <p class="text-[9px] opacity-60 font-bold uppercase">${p.cantidad} ${p.unidad} • ${catEmojis[p.categoria]||'📦'} ${catNombres[p.categoria]||p.categoria}</p>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-xs font-bold text-pink-400">$</span>
@@ -738,6 +857,9 @@ function render() {
 
     localStorage.setItem('cestaV22', JSON.stringify(productos));
     localStorage.setItem('presV22', presupuesto);
+
+    // Mantén la lista de categorías al día si el usuario la está viendo
+    if (vistaFiltro === 'categorias' && !categoriaActiva) renderCategoriasChips();
 }
 
 function toggleComprado(index) { productos[index].comprado = !productos[index].comprado; render(); }
