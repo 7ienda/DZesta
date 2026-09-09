@@ -148,7 +148,22 @@
             font-size: 12.5px;
         }
 
-        /* ===== Buscador inteligente ===== */
+        /* ===== Selector de tienda (contexto de compra) ===== */
+        .store-selector-btn {
+            display: flex; align-items: center; gap: 10px; width: 100%;
+            background: var(--input); border: 1.5px solid var(--border);
+            border-radius: 14px; padding: 12px 14px;
+        }
+        .store-selector-chevron { color: var(--primary); font-weight: 900; font-size: 14px; }
+        .tienda-item {
+            display: flex; align-items: center; gap: 12px; width: 100%;
+            padding: 12px 14px; border-radius: 14px; text-align: left;
+            background: var(--input); border: 1.5px solid var(--border);
+        }
+        .tienda-item.selected { background: var(--soft); border-color: var(--primary); }
+        .tienda-item-emoji { font-size: 22px; width: 30px; text-align: center; flex-shrink: 0; }
+        .tienda-item-nombre { font-weight: 700; font-size: 13.5px; flex: 1; }
+
         .search-bar {
             display: flex; align-items: center; gap: 8px;
             background: var(--input); border: 1.5px solid var(--border);
@@ -360,6 +375,16 @@
             </div>
         </div>
 
+        <!-- SELECTOR DE TIENDA (contexto de compra) -->
+        <div class="glass-card p-4 mb-4">
+            <p class="text-[10px] font-bold uppercase tracking-wide mb-2" style="color:var(--subtext);">¿Dónde estás comprando?</p>
+            <button type="button" onclick="abrirSelectorTienda()" class="store-selector-btn">
+                <span id="tienda-actual-emoji" style="font-size:20px;">🧺</span>
+                <span id="tienda-actual-nombre" class="flex-1 text-left font-bold text-sm">Mercado mayorista</span>
+                <span class="store-selector-chevron">▾</span>
+            </button>
+        </div>
+
         <!-- FORMULARIO -->
         <div class="glass-card p-4 mb-4">
             <form id="form-producto" class="space-y-3">
@@ -378,26 +403,13 @@
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <input type="number" id="cantidad-producto" required placeholder="Cant." class="w-20 p-3 text-sm outline-none">
-                    <select id="unidad-producto" class="w-24 p-3 text-sm font-bold">
-                        <option value="und">und</option><option value="Kg">Kg</option><option value="g">g</option>
-                        <option value="L">L</option><option value="ml">ml</option><option value="docena">docena</option>
-                        <option value="pack">pack</option><option value="caja">caja</option>
-                        <option value="saco">saco</option><option value="atado">atado</option>
-                    </select>
-                    <select id="categoria-producto" class="flex-1 min-w-[120px] p-3 text-sm">
-                        <option value="despensa">🥫 Despensa</option><option value="fruta">🍎 Frutas</option>
-                        <option value="verdura">🥦 Verduras</option><option value="carnes">🥩 Carnes</option>
-                        <option value="panaderia">🥖 Panadería</option><option value="snacks">🍪 Snacks</option>
-                        <option value="bebidas">🥤 Bebidas</option><option value="congelados">🧊 Congelados</option>
-                        <option value="embutidos">🍗 Embutidos</option><option value="condimentos">🧂 Condimentos</option>
-                        <option value="pastas">🍝 Pastas</option><option value="huevos">🥚 Huevos</option>
-                        <option value="pescados">🐟 Pescados</option><option value="dulces">🍬 Dulces</option>
-                        <option value="jugos">🧃 Jugos</option><option value="molidos">☕ Cafés</option>
-                        <option value="limpieza">🧻 Limpieza</option><option value="higiene">🧼 Higiene</option>
-                        <option value="mascotas">🐶 Mascotas</option><option value="bebe">👶 Bebé</option>
-                        <option value="farmacia">💊 Farmacia</option><option value="ofertas">⚡ Ofertas</option>
-                        <option value="favoritos">❤️ Favoritos</option><option value="otros">📦 Otros</option>
-                    </select>
+                    <select id="unidad-producto" class="w-24 p-3 text-sm font-bold"></select>
+                    <select id="categoria-producto" onchange="refrescarUnidadesPorCategoria()" class="flex-1 min-w-[120px] p-3 text-sm"></select>
+                </div>
+                <div id="campos-ropa" class="flex flex-wrap gap-2" style="display:none;">
+                    <input type="text" id="talla-producto" placeholder="Talla (ej. M)" class="flex-1 min-w-[80px] p-3 text-sm outline-none">
+                    <input type="text" id="color-producto" placeholder="Color" class="flex-1 min-w-[80px] p-3 text-sm outline-none">
+                    <input type="text" id="modelo-producto" placeholder="Modelo (opcional)" class="flex-1 min-w-[100px] p-3 text-sm outline-none">
                 </div>
                 <button type="submit" class="w-full btn-primary py-3 rounded-xl">
                     <span style="margin-right:0.5rem"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:0.875em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></span>Añadir a la Cesta
@@ -600,30 +612,12 @@
                 </div>
                 <div class="flex-1">
                     <label class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Unidad</label>
-                    <select id="detalle-unidad" class="w-full p-3 rounded-xl text-sm font-bold">
-                        <option value="und">und</option><option value="Kg">Kg</option><option value="g">g</option>
-                        <option value="L">L</option><option value="ml">ml</option><option value="docena">docena</option>
-                        <option value="pack">pack</option><option value="caja">caja</option>
-                        <option value="saco">saco</option><option value="atado">atado</option>
-                    </select>
+                    <input type="text" id="detalle-unidad" placeholder="Kg, Und, Caja..." class="w-full p-3 rounded-xl text-sm font-bold outline-none">
                 </div>
             </div>
             <div>
                 <label class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Categoría</label>
-                <select id="detalle-categoria" class="w-full p-3 rounded-xl text-sm">
-                    <option value="despensa">🥫 Despensa</option><option value="fruta">🍎 Frutas</option>
-                    <option value="verdura">🥦 Verduras</option><option value="carnes">🥩 Carnes</option>
-                    <option value="panaderia">🥖 Panadería</option><option value="snacks">🍪 Snacks</option>
-                    <option value="bebidas">🥤 Bebidas</option><option value="congelados">🧊 Congelados</option>
-                    <option value="embutidos">🍗 Embutidos</option><option value="condimentos">🧂 Condimentos</option>
-                    <option value="pastas">🍝 Pastas</option><option value="huevos">🥚 Huevos</option>
-                    <option value="pescados">🐟 Pescados</option><option value="dulces">🍬 Dulces</option>
-                    <option value="jugos">🧃 Jugos</option><option value="molidos">☕ Cafés</option>
-                    <option value="limpieza">🧻 Limpieza</option><option value="higiene">🧼 Higiene</option>
-                    <option value="mascotas">🐶 Mascotas</option><option value="bebe">👶 Bebé</option>
-                    <option value="farmacia">💊 Farmacia</option><option value="ofertas">⚡ Ofertas</option>
-                    <option value="favoritos">❤️ Favoritos</option><option value="otros">📦 Otros</option>
-                </select>
+                <select id="detalle-categoria" class="w-full p-3 rounded-xl text-sm"></select>
             </div>
             <div class="flex gap-2">
                 <div class="flex-1">
@@ -648,6 +642,43 @@
     </div>
 </div>
 
+<!-- Modal: Selector de tienda -->
+<div class="modal-overlay" id="modal-tiendas">
+    <div class="modal-box" style="max-height:82vh;overflow-y:auto;">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-black" style="color:var(--primary);">🏬 Elige tu tienda</h2>
+            <button onclick="closeModal('modal-tiendas')" class="text-gray-400 text-xl"><span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></span></button>
+        </div>
+        <p class="text-xs mb-3" style="color:var(--subtext);">Esto ajusta las categorías, unidades y cómo se interpreta tu voz.</p>
+        <div id="lista-tiendas" class="space-y-2"></div>
+    </div>
+</div>
+
+<!-- Modal: Crear tienda personalizada -->
+<div class="modal-overlay" id="modal-tienda-personalizada">
+    <div class="modal-box">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-black" style="color:var(--primary);">✨ Nueva tienda</h2>
+            <button onclick="closeModal('modal-tienda-personalizada')" class="text-gray-400 text-xl"><span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></span></button>
+        </div>
+        <div class="space-y-3">
+            <div>
+                <label class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Nombre de la tienda</label>
+                <input type="text" id="custom-tienda-nombre" placeholder="Ej. Mercado de barrio" class="w-full p-3 rounded-xl text-sm font-semibold outline-none">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Categorías (separadas por coma)</label>
+                <input type="text" id="custom-tienda-categorias" placeholder="Frutas, Verduras, Abarrotes" class="w-full p-3 rounded-xl text-sm outline-none">
+            </div>
+            <div>
+                <label class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Unidades (separadas por coma)</label>
+                <input type="text" id="custom-tienda-unidades" placeholder="Kg, Und, Cajón, Atado" class="w-full p-3 rounded-xl text-sm outline-none">
+            </div>
+        </div>
+        <button onclick="guardarTiendaPersonalizada()" class="w-full btn-primary py-3 rounded-xl text-sm mt-5">Guardar y usar esta tienda</button>
+    </div>
+</div>
+
 <script>
 // =================== ESTADO ===================
 let productos = JSON.parse(localStorage.getItem('cestaV22')) || [];
@@ -667,13 +698,28 @@ const catColors = {
     embutidos:'#e11d48',condimentos:'#475569',pastas:'#ea580c',huevos:'#fbbf24',
     pescados:'#06b6d4',dulces:'#ec4899',jugos:'#f97316',molidos:'#a78bfa',
     limpieza:'#22d3ee',higiene:'#c084fc',mascotas:'#4ade80',bebe:'#f472b6',
-    farmacia:'#f87171',ofertas:'#facc15',favoritos:'#ec4899',otros:'#94a3b8'
+    farmacia:'#f87171',ofertas:'#facc15',favoritos:'#ec4899',otros:'#94a3b8',
+    // --- Nuevas categorías para el contexto de tienda ---
+    lacteos:'#60a5fa', abarrotes:'#fb923c', hogar:'#34d399', cuidadopersonal:'#c084fc',
+    herramientas:'#78716c', electricidad:'#eab308', plomeria:'#38bdf8', pintura:'#f472b6',
+    construccion:'#dc2626', tornillos:'#64748b', adhesivos:'#a3e635', seguridad:'#f97316',
+    jardineria:'#22c55e', polos:'#3b82f6', camisas:'#0ea5e9', pantalones:'#1d4ed8',
+    vestidos:'#ec4899', ropainterior:'#f43f5e', deportiva:'#10b981', calzado:'#a855f7',
+    accesorios:'#eab308', medicamentos:'#dc2626', higienepersonal:'#8b5cf6',
+    cuidadoinfantil:'#fb7185', vitaminas:'#84cc16', primerosauxilios:'#f87171'
 };
 const catEmojis = {
     despensa:'🥫',fruta:'🍎',verdura:'🥦',carnes:'🥩',panaderia:'🥖',snacks:'🍪',
     bebidas:'🥤',congelados:'🧊',embutidos:'🍗',condimentos:'🧂',pastas:'🍝',huevos:'🥚',
     pescados:'🐟',dulces:'🍬',jugos:'🧃',molidos:'☕',limpieza:'🧻',higiene:'🧼',
-    mascotas:'🐶',bebe:'👶',farmacia:'💊',ofertas:'⚡',favoritos:'❤️',otros:'📦'
+    mascotas:'🐶',bebe:'👶',farmacia:'💊',ofertas:'⚡',favoritos:'❤️',otros:'📦',
+    lacteos:'🥛', abarrotes:'🛒', hogar:'🏠', cuidadopersonal:'🧴',
+    herramientas:'🔨', electricidad:'⚡', plomeria:'🚿', pintura:'🎨',
+    construccion:'🧱', tornillos:'🔩', adhesivos:'🧪', seguridad:'🦺',
+    jardineria:'🌱', polos:'👕', camisas:'👔', pantalones:'👖',
+    vestidos:'👗', ropainterior:'🩲', deportiva:'🏃', calzado:'👟',
+    accesorios:'👜', medicamentos:'💊', higienepersonal:'🧼',
+    cuidadoinfantil:'🍼', vitaminas:'🌿', primerosauxilios:'🩹'
 };
 const catNombres = {
     despensa:'Despensa',fruta:'Frutas',verdura:'Verduras',carnes:'Carnes',
@@ -681,10 +727,219 @@ const catNombres = {
     embutidos:'Embutidos',condimentos:'Condimentos',pastas:'Pastas',huevos:'Huevos',
     pescados:'Pescados',dulces:'Dulces',jugos:'Jugos',molidos:'Cafés',
     limpieza:'Limpieza',higiene:'Higiene',mascotas:'Mascotas',bebe:'Bebé',
-    farmacia:'Farmacia',ofertas:'Ofertas',favoritos:'Favoritos',otros:'Otros'
+    farmacia:'Farmacia',ofertas:'Ofertas',favoritos:'Favoritos',otros:'Otros',
+    lacteos:'Lácteos', abarrotes:'Abarrotes', hogar:'Hogar', cuidadopersonal:'Cuidado personal',
+    herramientas:'Herramientas', electricidad:'Electricidad', plomeria:'Plomería', pintura:'Pintura',
+    construccion:'Construcción', tornillos:'Tornillos y fijaciones', adhesivos:'Adhesivos', seguridad:'Seguridad',
+    jardineria:'Jardinería', polos:'Polos', camisas:'Camisas', pantalones:'Pantalones',
+    vestidos:'Vestidos', ropainterior:'Ropa interior', deportiva:'Ropa deportiva', calzado:'Calzado',
+    accesorios:'Accesorios', medicamentos:'Medicamentos', higienepersonal:'Higiene personal',
+    cuidadoinfantil:'Cuidado infantil', vitaminas:'Vitaminas', primerosauxilios:'Primeros auxilios'
 };
 
-// =================== LISTAS GUARDADAS ===================
+// =================== CONTEXTO DE TIENDA ===================
+// Diccionarios de voz reutilizables (palabra hablada -> categoría) para comercios tipo supermercado/mercado
+const VOZ_CATS_SUPERMERCADO = {
+    fruta: ['manzana','manzanas','platano','plátano','platanos','plátanos','pera','peras','uva','uvas','naranja','naranjas','mandarina','mandarinas','sandia','sandía','melon','melón','fresa','fresas','papaya','piña','mango','mangos','limon','limón','limones','durazno','duraznos','kiwi','palta','paltas'],
+    verdura: ['papa','papas','tomate','tomates','cebolla','cebollas','zanahoria','zanahorias','lechuga','apio','pepino','pimiento','pimenton','pimentón','choclo','maiz','maíz','brocoli','brócoli','coliflor','zapallo','camote','yuca','culantro','cilantro','perejil','ajo','ajos','vainita','vainitas'],
+    carnes: ['pollo','carne','res','cerdo','chuleta','bistec','lomo','pavo','costilla','molida','hamburguesa'],
+    pescados: ['pescado','atun','atún','salmon','salmón','camaron','camarón','pota','jurel','bonito','conchas','mariscos'],
+    lacteos: ['leche','queso','yogurt','yogur','mantequilla','crema de leche','margarina'],
+    abarrotes: ['arroz','azucar','azúcar','sal','aceite','fideos','harina','avena','menestras','frejol','frijol','lenteja','lentejas','conserva','atun en lata','salsa de tomate','mayonesa','mostaza','vinagre'],
+    despensa: ['galleta de soda','sazonador','caldo','cubito','gelatina','flan'],
+    bebidas: ['agua','gaseosa','jugo','cerveza','vino','soda','refresco','cafe','café','te','té','energizante'],
+    limpieza: ['detergente','lejia','lejía','jabon','jabón','escoba','trapeador','desinfectante','papel higienico','papel higiénico','esponja','bolsa de basura','bolsas de basura'],
+    cuidadopersonal: ['shampoo','champu','champú','crema dental','pasta dental','desodorante','toalla higienica','toalla higiénica','jabon de tocador','papel toalla','maquinita de afeitar','protector solar','bloqueador'],
+    mascotas: ['alimento para perro','comida de gato','croquetas','arena para gato','correa'],
+    hogar: ['foco','vela','pilas','pila','tuper','bolsa ziploc'],
+    snacks: ['galleta','galletas','papas fritas','chocolate','chocolates','caramelo','caramelos','chizitos','piqueo'],
+    panaderia: ['pan','panes','tostadas','pan de molde'],
+    congelados: ['helado','helados','nuggets','papas congeladas','verduras congeladas'],
+    dulces: ['dulce','dulces','chicle','chicles'],
+};
+const VOZ_UNIDADES_SUPERMERCADO = {
+    'kilos':'Kg','kilo':'Kg','kg':'Kg','kilogramos':'Kg','kilogramo':'Kg',
+    'gramos':'g','gramo':'g',
+    'litros':'L','litro':'L',
+    'mililitros':'Ml','mililitro':'Ml','ml':'Ml',
+    'paquetes':'Paquete','paquete':'Paquete',
+    'cajas':'Caja','caja':'Caja',
+    'bolsas':'Bolsa','bolsa':'Bolsa',
+    'botellas':'Botella','botella':'Botella',
+    'latas':'Lata','lata':'Lata',
+    'docenas':'Docena','docena':'Docena',
+    'cajones':'Cajón','cajon':'Cajón','cajón':'Cajón',
+    'sacos':'Saco','saco':'Saco',
+    'atados':'Atado','atado':'Atado',
+    'unidades':'Und','unidad':'Und'
+};
+
+const TIENDAS_CONFIG = {
+    mayorista: {
+        nombre: 'Mercado mayorista', emoji: '🧺',
+        categorias: ['fruta','verdura','carnes','abarrotes','despensa','bebidas','lacteos'],
+        unidadesDefault: ['Und','Kg','g','Cajón','Saco','Atado','Bolsa','Paquete'],
+        unidadesPorCategoria: {
+            fruta: ['Und','Kg','Cajón','Atado','Bolsa'],
+            verdura: ['Und','Kg','Cajón','Atado','Saco','Bolsa'],
+        },
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+    plazavea: {
+        nombre: 'Plaza Vea', emoji: '🛒',
+        categorias: ['despensa','fruta','verdura','carnes','pescados','lacteos','bebidas','limpieza','cuidadopersonal','mascotas','hogar','snacks'],
+        unidadesDefault: ['Und','Kg','g','L','Ml','Paquete','Caja','Bolsa','Botella','Lata'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+    mass: {
+        nombre: 'Mass', emoji: '🏪',
+        categorias: ['despensa','bebidas','lacteos','snacks','limpieza','cuidadopersonal','hogar'],
+        unidadesDefault: ['Und','Paquete','Bolsa','Caja','Botella','L','Ml'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+    metro: {
+        nombre: 'Metro', emoji: '🛍️',
+        categorias: ['despensa','fruta','verdura','carnes','lacteos','bebidas','limpieza','cuidadopersonal','mascotas','hogar','snacks'],
+        unidadesDefault: ['Und','Kg','g','L','Ml','Paquete','Caja','Bolsa','Botella','Lata'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+    tottus: {
+        nombre: 'Tottus', emoji: '🛒',
+        categorias: ['despensa','fruta','verdura','carnes','pescados','lacteos','bebidas','limpieza','cuidadopersonal','mascotas','hogar','snacks'],
+        unidadesDefault: ['Und','Kg','g','L','Ml','Paquete','Caja','Bolsa','Botella','Lata'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+    ferreteria: {
+        nombre: 'Ferretería', emoji: '🔧',
+        categorias: ['herramientas','electricidad','plomeria','pintura','construccion','tornillos','adhesivos','seguridad','jardineria'],
+        unidadesDefault: ['Und','Metro','Kg','g','Caja','Bolsa','Paquete','Litro','Galón'],
+        unidadesPorCategoria: {
+            electricidad: ['Und','Metro','Caja','Rollo','Paquete'],
+            pintura: ['Litro','Galón','Und'],
+            plomeria: ['Und','Metro','Caja','Paquete'],
+        },
+        vozUnidadSinonimos: {
+            'metros':'Metro','metro':'Metro',
+            'kilos':'Kg','kilo':'Kg','kg':'Kg',
+            'gramos':'g','gramo':'g',
+            'cajas':'Caja','caja':'Caja',
+            'bolsas':'Bolsa','bolsa':'Bolsa',
+            'paquetes':'Paquete','paquete':'Paquete',
+            'litros':'Litro','litro':'Litro',
+            'galones':'Galón','galon':'Galón','galón':'Galón',
+            'rollos':'Rollo','rollo':'Rollo',
+            'unidades':'Und','unidad':'Und'
+        },
+        vozCategorias: {
+            herramientas: ['martillo','martillos','destornillador','destornilladores','taladro','llave','alicate','sierra','wincha','cinta metrica','cinta métrica','combo','serrucho'],
+            electricidad: ['cable','cables','foco','focos','interruptor','tomacorriente','enchufe','cinta aislante','fluorescente','cinta aisladora','led'],
+            plomeria: ['tuberia','tubería','tuberias','tuberías','llave de agua','grifo','codo','valvula','válvula','manguera','sifon','sifón','silicona para agua'],
+            pintura: ['pintura','pinturas','brocha','brochas','rodillo','thinner','esmalte','barniz','lija'],
+            construccion: ['cemento','arena','ladrillo','ladrillos','fierro','yeso','concreto'],
+            tornillos: ['tornillo','tornillos','clavo','clavos','tuerca','tuercas','perno','pernos'],
+            adhesivos: ['pegamento','silicona','cinta adhesiva','goma','cola sintetica','cola sintética'],
+            seguridad: ['guantes','casco','lentes de seguridad','mascarilla','orejeras'],
+            jardineria: ['tierra','abono','semillas','maceta','manguera de jardin','manguera de jardín','tijera de podar'],
+        },
+    },
+    ropa: {
+        nombre: 'Tienda de ropa', emoji: '👕',
+        categorias: ['polos','camisas','pantalones','vestidos','ropainterior','deportiva','calzado','accesorios'],
+        unidadesDefault: ['Und','Par','Docena'],
+        unidadesPorCategoria: {
+            calzado: ['Par','Und'],
+        },
+        vozUnidadSinonimos: {
+            'pares':'Par','par':'Par','docenas':'Docena','docena':'Docena','unidades':'Und','unidad':'Und'
+        },
+        vozCategorias: {
+            polos: ['polo','polos','camiseta','camisetas'],
+            camisas: ['camisa','camisas'],
+            pantalones: ['pantalon','pantalón','pantalones','jean','jeans'],
+            vestidos: ['vestido','vestidos'],
+            ropainterior: ['calzon','calzón','calzones','boxer','boxers','sosten','sostén','ropa interior'],
+            deportiva: ['short','shorts','buzo','chaqueta deportiva','licra','polo deportivo'],
+            calzado: ['zapato','zapatos','zapatilla','zapatillas','sandalia','sandalias','bota','botas'],
+            accesorios: ['gorra','gorras','cinturon','cinturón','bufanda','cartera','mochila','medias','calcetines'],
+        },
+        esRopa: true,
+    },
+    farmacia: {
+        nombre: 'Farmacia', emoji: '💊',
+        categorias: ['medicamentos','higienepersonal','cuidadoinfantil','cuidadopersonal','vitaminas','primerosauxilios'],
+        unidadesDefault: ['Und','Caja','Frasco','Tubo','Blíster','Paquete'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: {
+            'cajas':'Caja','caja':'Caja','frascos':'Frasco','frasco':'Frasco',
+            'tubos':'Tubo','tubo':'Tubo','blister':'Blíster','blíster':'Blíster',
+            'paquetes':'Paquete','paquete':'Paquete','unidades':'Und','unidad':'Und',
+            'pastillas':'Und','tabletas':'Und'
+        },
+        vozCategorias: {
+            medicamentos: ['paracetamol','ibuprofeno','pastillas','pastilla','jarabe','antibiotico','antibiótico','tableta','tabletas','capsula','cápsula','antigripal','analgesico','analgésico'],
+            higienepersonal: ['jabon','jabón','shampoo','crema dental','pasta dental','desodorante','toalla higienica','toalla higiénica','papel higienico','papel higiénico'],
+            cuidadoinfantil: ['pañal','pañales','toallitas humedas','toallitas húmedas','formula','fórmula','biberon','biberón'],
+            vitaminas: ['vitamina','vitaminas','multivitaminico','multivitamínico','suplemento','suplementos','omega 3','calcio'],
+            primerosauxilios: ['curita','curitas','alcohol','gasa','gasas','venda','vendas','algodon','algodón','agua oxigenada'],
+            cuidadopersonal: ['crema','cremas','protector solar','bloqueador','locion','loción'],
+        },
+    },
+    panaderia: {
+        nombre: 'Panadería', emoji: '🥖',
+        categorias: ['panaderia','dulces','bebidas','despensa'],
+        unidadesDefault: ['Und','Kg','g','Docena','Paquete'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: { panaderia: ['pan','panes','pan de molde','tostadas','baguette'], dulces: ['torta','tortas','queque','pastel','pasteles','galleta','galletas'] },
+    },
+    bodega: {
+        nombre: 'Bodega / Minimarket', emoji: '🏬',
+        categorias: ['despensa','bebidas','snacks','lacteos','limpieza','cuidadopersonal'],
+        unidadesDefault: ['Und','Kg','g','L','Ml','Paquete','Bolsa'],
+        unidadesPorCategoria: {},
+        vozUnidadSinonimos: VOZ_UNIDADES_SUPERMERCADO,
+        vozCategorias: VOZ_CATS_SUPERMERCADO,
+    },
+};
+const ORDEN_TIENDAS = ['mayorista','plazavea','mass','metro','tottus','ferreteria','ropa','farmacia','panaderia','bodega'];
+
+// Números hablados en español (para "cinco kilos de papa")
+const NUMEROS_PALABRA = {
+    'media':0.5,'medio':0.5,'un':1,'uno':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,
+    'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,'trece':13,
+    'catorce':14,'quince':15,'dieciseis':16,'dieciséis':16,'diecisiete':17,'dieciocho':18,
+    'diecinueve':19,'veinte':20,'treinta':30
+};
+
+// --- Estado de tienda persistente ---
+let tiendasPersonalizadas = JSON.parse(localStorage.getItem('tiendasPersonalizadasV1')) || [];
+let tiendaActualKey = localStorage.getItem('tiendaActualV1') || 'mayorista';
+
+function getTiendaActual() {
+    if (TIENDAS_CONFIG[tiendaActualKey]) return Object.assign({ key: tiendaActualKey }, TIENDAS_CONFIG[tiendaActualKey]);
+    const custom = tiendasPersonalizadas.find(t => t.id === tiendaActualKey);
+    if (custom) return Object.assign({ key: custom.id }, custom);
+    tiendaActualKey = 'mayorista';
+    return Object.assign({ key: 'mayorista' }, TIENDAS_CONFIG['mayorista']);
+}
+
+function getUnidadesParaCategoria(tienda, categoria) {
+    if (tienda.unidadesPorCategoria && tienda.unidadesPorCategoria[categoria] && tienda.unidadesPorCategoria[categoria].length) {
+        return tienda.unidadesPorCategoria[categoria];
+    }
+    return tienda.unidadesDefault && tienda.unidadesDefault.length ? tienda.unidadesDefault : ['Und'];
+}
+
+
 function getListas() {
     return JSON.parse(localStorage.getItem('listasGuardadasV1')) || [];
 }
@@ -874,22 +1129,145 @@ function setVistaFiltro(v) {
 
 function renderCategoriasChips() {
     const cont = document.getElementById('categorias-lista');
+    const tienda = getTiendaActual();
     const presentes = {};
     productos.forEach(p => { presentes[p.categoria] = (presentes[p.categoria] || 0) + 1; });
-    const keys = Object.keys(presentes);
-    if (keys.length === 0) {
-        cont.innerHTML = `<p class="text-xs opacity-60 px-1 col-span-2">Aún no hay productos agregados</p>`;
-        return;
-    }
-    cont.innerHTML = keys.map(c => `
+
+    const baseCats = (tienda.categorias || []).includes('otros') ? tienda.categorias : [...(tienda.categorias || []), 'otros'];
+    const tile = (c) => `
         <div class="glass-card p-3 flex items-center gap-3">
             <div class="stat-ico" style="background:${(catColors[c]||'#94a3b8')}22;color:${catColors[c]||'#94a3b8'};font-size:18px;margin:0;">${catEmojis[c] || '📦'}</div>
             <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold truncate">${catNombres[c] || c}</p>
-                <p class="text-[10px] font-bold" style="color:var(--subtext);">${presentes[c]} producto${presentes[c]===1?'':'s'}</p>
+                <p class="text-[10px] font-bold" style="color:var(--subtext);">${presentes[c]||0} producto${(presentes[c]||0)===1?'':'s'}</p>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+
+    let html = baseCats.map(tile).join('');
+
+    // No se ocultan productos ya agregados: si hay categorías de otra tienda con productos, se muestran aparte
+    const extras = Object.keys(presentes).filter(c => !baseCats.includes(c));
+    if (extras.length > 0) {
+        html += `<p class="text-[10px] font-bold uppercase mt-1 mb-0.5" style="color:var(--subtext);grid-column:1 / -1;">Otras categorías en tu lista</p>`;
+        html += extras.map(tile).join('');
+    }
+    cont.innerHTML = html || `<p class="text-xs opacity-60 px-1" style="grid-column:1 / -1;">Aún no hay categorías</p>`;
+}
+
+// =================== SISTEMA DE TIENDAS (contexto de compra) ===================
+function actualizarChipTienda() {
+    const tienda = getTiendaActual();
+    document.getElementById('tienda-actual-emoji').textContent = tienda.emoji || '🏬';
+    document.getElementById('tienda-actual-nombre').textContent = tienda.nombre || 'Tienda';
+}
+
+function poblarSelectCategorias(tienda) {
+    const sel = document.getElementById('categoria-producto');
+    const cats = (tienda.categorias || []).includes('otros') ? tienda.categorias : [...(tienda.categorias || []), 'otros'];
+    sel.innerHTML = cats.map(c => `<option value="${c}">${catEmojis[c]||'📦'} ${catNombres[c]||c}</option>`).join('');
+}
+
+function poblarSelectUnidades(tienda, categoria) {
+    const sel = document.getElementById('unidad-producto');
+    const valorPrevio = sel.value;
+    const unidades = getUnidadesParaCategoria(tienda, categoria);
+    sel.innerHTML = unidades.map(u => `<option value="${u}">${u}</option>`).join('');
+    if (unidades.includes(valorPrevio)) sel.value = valorPrevio;
+}
+
+function refrescarUnidadesPorCategoria() {
+    const tienda = getTiendaActual();
+    const categoria = document.getElementById('categoria-producto').value;
+    poblarSelectUnidades(tienda, categoria);
+}
+
+function refrescarFormularioPorTienda() {
+    const tienda = getTiendaActual();
+    poblarSelectCategorias(tienda);
+    poblarSelectUnidades(tienda, document.getElementById('categoria-producto').value);
+    document.getElementById('campos-ropa').style.display = tienda.esRopa ? 'flex' : 'none';
+    actualizarChipTienda();
+    if (vistaFiltro === 'categorias') renderCategoriasChips();
+}
+
+function seleccionarTienda(key) {
+    tiendaActualKey = key;
+    localStorage.setItem('tiendaActualV1', key);
+    refrescarFormularioPorTienda();
+    closeModal('modal-tiendas');
+    showToast(`📍 Comprando en: ${getTiendaActual().nombre}`, 'ok');
+}
+
+function abrirSelectorTienda() {
+    const cont = document.getElementById('lista-tiendas');
+    const actual = tiendaActualKey;
+    let html = ORDEN_TIENDAS.map(key => {
+        const t = TIENDAS_CONFIG[key];
+        return `<button type="button" onclick="seleccionarTienda('${key}')" class="tienda-item ${key===actual?'selected':''}">
+            <span class="tienda-item-emoji">${t.emoji}</span>
+            <span class="tienda-item-nombre">${t.nombre}</span>
+            ${key===actual ? '<span style="color:var(--primary);font-weight:900;">✓</span>' : ''}
+        </button>`;
+    }).join('');
+
+    if (tiendasPersonalizadas.length > 0) {
+        html += `<p class="text-[10px] font-bold uppercase mt-2 mb-1" style="color:var(--subtext);">Mis tiendas</p>`;
+        html += tiendasPersonalizadas.map(t => `
+            <button type="button" onclick="seleccionarTienda('${t.id}')" class="tienda-item ${t.id===actual?'selected':''}">
+                <span class="tienda-item-emoji">${t.emoji||'🏬'}</span>
+                <span class="tienda-item-nombre">${t.nombre}</span>
+                ${t.id===actual ? '<span style="color:var(--primary);font-weight:900;">✓</span>' : ''}
+            </button>`).join('');
+    }
+
+    html += `<button type="button" onclick="closeModal('modal-tiendas');openModal('modal-tienda-personalizada')" class="tienda-item" style="border-style:dashed;">
+        <span class="tienda-item-emoji">➕</span>
+        <span class="tienda-item-nombre">Otra tienda</span>
+    </button>`;
+
+    cont.innerHTML = html;
+    openModal('modal-tiendas');
+}
+
+function slugCategoria(nombre) {
+    return normalizarTexto(nombre).replace(/[^a-z0-9]+/g, '') || ('cat' + Date.now());
+}
+
+function guardarTiendaPersonalizada() {
+    const nombre = document.getElementById('custom-tienda-nombre').value.trim();
+    const catsTexto = document.getElementById('custom-tienda-categorias').value.trim();
+    const unidsTexto = document.getElementById('custom-tienda-unidades').value.trim();
+    if (!nombre) { showToast('Ponle un nombre a tu tienda', 'warn'); return; }
+    if (!catsTexto) { showToast('Agrega al menos una categoría', 'warn'); return; }
+
+    const categoriasLabels = catsTexto.split(',').map(s => s.trim()).filter(Boolean);
+    const categorias = categoriasLabels.map(label => {
+        const key = slugCategoria(label);
+        if (!catNombres[key]) {
+            catNombres[key] = label;
+            catEmojis[key] = '📦';
+            catColors[key] = '#94a3b8';
+        }
+        return key;
+    });
+
+    const unidades = (unidsTexto ? unidsTexto.split(',').map(s => s.trim()).filter(Boolean) : ['Und','Kg']);
+
+    const id = 'custom_' + Date.now();
+    const nuevaTienda = {
+        id, nombre, emoji: '🏬',
+        categorias, unidadesDefault: unidades, unidadesPorCategoria: {},
+        vozUnidadSinonimos: {}, vozCategorias: {}
+    };
+    tiendasPersonalizadas.push(nuevaTienda);
+    localStorage.setItem('tiendasPersonalizadasV1', JSON.stringify(tiendasPersonalizadas));
+
+    document.getElementById('custom-tienda-nombre').value = '';
+    document.getElementById('custom-tienda-categorias').value = '';
+    document.getElementById('custom-tienda-unidades').value = '';
+
+    closeModal('modal-tienda-personalizada');
+    seleccionarTienda(id);
 }
 
 // =================== MODALES UTILS ===================
@@ -944,22 +1322,121 @@ if (!SpeechRecognition) {
     recognition.onerror = (e) => { if (e.error === 'not-allowed') alert('Permiso denegado para usar el micrófono.'); };
 }
 function procesarVoz(f) {
-    const num = f.match(/\d+/);
-    if (num) document.getElementById('cantidad-producto').value = num[0];
-    const units = ['kg','kilos','gramos','litros','ml','docena','pack','caja','saco','atado'];
-    units.forEach(u => {
-        if (f.includes(u)) {
-            document.getElementById('unidad-producto').value = u.includes('kil')?'Kg':u.includes('gra')?'g':u.includes('lit')?'L':u;
-        }
+    const tienda = getTiendaActual();
+    const segmentos = dividirSegmentosVoz(f);
+    if (segmentos.length === 0) { showToast('No entendí, intenta de nuevo', 'warn'); return; }
+
+    let agregados = 0;
+    segmentos.forEach(seg => {
+        const item = parseSegmentoVoz(seg, tienda);
+        if (!item || !item.nombre || item.nombre.length < 2) return;
+        productos.push({
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            unidad: item.unidad,
+            categoria: item.categoria,
+            precio: 0,
+            comprado: false
+        });
+        agregados++;
     });
-    const cats = Object.keys(catColors);
-    cats.forEach(c => { if (f.includes(c)) document.getElementById('categoria-producto').value = c; });
-    let nombre = f.replace(/\d+/g,'').replace(/añade|agrega|en|de|la|el|los|un|una/g,'').trim();
-    units.forEach(u => { nombre = nombre.replace(u,''); });
-    cats.forEach(c => { nombre = nombre.replace(c,''); });
-    document.getElementById('nombre-producto').value = nombre.trim();
-    if (nombre.length > 2) setTimeout(() => document.getElementById('form-producto').dispatchEvent(new Event('submit')), 600);
+
+    if (agregados > 0) {
+        render();
+        document.getElementById('nombre-producto').value = '';
+        showToast(`🎙️ ${agregados} producto${agregados>1?'s':''} agregado${agregados>1?'s':''} · ${tienda.emoji} ${tienda.nombre}`, 'ok');
+    } else {
+        showToast('No logré identificar el producto, intenta de nuevo', 'warn');
+    }
 }
+
+// Divide una frase larga en varios ítems: "5 kilos de papa y 2 cajones de tomate" -> 2 segmentos
+function dividirSegmentosVoz(frase) {
+    return frase
+        .split(/\s*(?:,|;|\by\b|\btambi[eé]n\b|\badem[aá]s\b)\s*/i)
+        .map(s => s.trim())
+        .filter(s => s.length > 1);
+}
+
+// Convierte números hablados o en dígitos a un valor numérico
+function parseNumeroHablado(texto) {
+    const digito = texto.match(/\d+(\.\d+)?/);
+    if (digito) return { valor: parseFloat(digito[0]), texto: digito[0] };
+    for (const palabra of Object.keys(NUMEROS_PALABRA)) {
+        const re = new RegExp('\\b' + palabra + '\\b', 'i');
+        if (re.test(texto)) return { valor: NUMEROS_PALABRA[palabra], texto: re.exec(texto)[0] };
+    }
+    return null;
+}
+
+// Interpreta un segmento de voz usando el contexto (categorías/unidades) de la tienda seleccionada
+function parseSegmentoVoz(segmento, tienda) {
+    let texto = ' ' + segmento.toLowerCase() + ' ';
+
+    // 1) Cantidad
+    let cantidad = 1;
+    const numeroEncontrado = parseNumeroHablado(texto);
+    if (numeroEncontrado) {
+        cantidad = numeroEncontrado.valor;
+        texto = texto.replace(new RegExp('\\b' + numeroEncontrado.texto + '\\b', 'i'), ' ');
+    }
+
+    // 2) Unidad (según sinónimos propios de la tienda, con un set genérico como respaldo)
+    let unidad = null;
+    const sinonimos = Object.assign({}, VOZ_UNIDADES_SUPERMERCADO, tienda.vozUnidadSinonimos || {});
+    for (const palabra of Object.keys(sinonimos)) {
+        const re = new RegExp('\\b' + palabra + '\\b', 'i');
+        if (re.test(texto)) { unidad = sinonimos[palabra]; texto = texto.replace(re, ' '); break; }
+    }
+
+    // 3) Categoría (según vocabulario de productos propio de la tienda)
+    let categoria = 'otros';
+    const keywordMap = tienda.vozCategorias || {};
+    let encontrada = false;
+    for (const cat of Object.keys(keywordMap)) {
+        for (const palabra of keywordMap[cat]) {
+            const re = new RegExp('\\b' + palabra + '\\b', 'i');
+            if (re.test(texto)) { categoria = cat; encontrada = true; break; }
+        }
+        if (encontrada) break;
+    }
+    // Fallback: si el usuario menciona literalmente el nombre de una categoría de la tienda
+    if (!encontrada) {
+        for (const cat of (tienda.categorias || [])) {
+            const nombreCat = normalizarTexto(catNombres[cat] || cat);
+            if (nombreCat && normalizarTexto(texto).includes(nombreCat)) { categoria = cat; texto = texto.replace(new RegExp(nombreCat, 'i'), ' '); break; }
+        }
+    }
+
+    // 4) Atributos de ropa: talla y color (no bloquean, solo enriquecen el nombre)
+    let atributosRopa = '';
+    if (tienda.esRopa) {
+        const tallaMatch = texto.match(/\btalla\s*([a-z0-9]+)\b/i) || texto.match(/\b(xs|xxl|xl|s|m|l)\b/i);
+        let talla = null;
+        if (tallaMatch) { talla = tallaMatch[1] || tallaMatch[0]; texto = texto.replace(tallaMatch[0], ' '); }
+        const colores = ['negro','negra','blanco','blanca','azul','rojo','roja','verde','amarillo','amarilla','gris','rosado','rosada','celeste','morado','morada','beige','marron','marrón'];
+        let color = null;
+        for (const c of colores) {
+            const re = new RegExp('\\b' + c + '\\b', 'i');
+            if (re.test(texto)) { color = c; texto = texto.replace(re, ' '); break; }
+        }
+        const partes = [color, talla ? `Talla ${talla.toUpperCase()}` : null].filter(Boolean);
+        if (partes.length) atributosRopa = ` (${partes.join(', ')})`;
+    }
+
+    // 5) Limpieza de muletillas para quedarnos con el nombre del producto
+    const muletillas = ['de','del','la','el','los','las','un','una','unos','unas','para','con','por favor','agrega','añade','agregar','añadir','necesito','quiero','dame','comprar','tambien','también','además','ademas'];
+    muletillas.forEach(m => { texto = texto.replace(new RegExp('\\b' + m + '\\b', 'gi'), ' '); });
+    let nombre = texto.replace(/\s+/g, ' ').trim();
+    if (!nombre) return null;
+    nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1) + atributosRopa;
+
+    // 6) Unidad por defecto según la categoría/tienda si no se detectó una en la voz
+    if (!unidad) unidad = getUnidadesParaCategoria(tienda, categoria)[0] || 'Und';
+
+    return { nombre, cantidad, unidad, categoria };
+}
+
 
 function normalizarTexto(str) {
     return (str || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
@@ -1090,6 +1567,12 @@ function eliminarProducto(index) {
 
 // =================== DETALLE / EDICIÓN COMPLETA DEL PRODUCTO ===================
 let detalleIndexActual = null;
+function poblarSelectTodasLasCategorias(seleccionActual) {
+    const sel = document.getElementById('detalle-categoria');
+    const keys = Object.keys(catNombres).sort((a, b) => catNombres[a].localeCompare(catNombres[b], 'es'));
+    sel.innerHTML = keys.map(c => `<option value="${c}">${catEmojis[c]||'📦'} ${catNombres[c]}</option>`).join('');
+    if (keys.includes(seleccionActual)) sel.value = seleccionActual;
+}
 function abrirDetalleProducto(index) {
     const p = productos[index];
     if (!p) return;
@@ -1097,7 +1580,7 @@ function abrirDetalleProducto(index) {
     document.getElementById('detalle-nombre').value = p.nombre;
     document.getElementById('detalle-cantidad').value = p.cantidad;
     document.getElementById('detalle-unidad').value = p.unidad;
-    document.getElementById('detalle-categoria').value = p.categoria;
+    poblarSelectTodasLasCategorias(p.categoria);
     document.getElementById('detalle-precio').value = p.precio || '';
     document.getElementById('detalle-comprado').checked = !!p.comprado;
     openModal('modal-detalle-producto');
@@ -1139,8 +1622,17 @@ function borrarComprados() {
 
 document.getElementById('form-producto').onsubmit = (e) => {
     e.preventDefault();
+    const tienda = getTiendaActual();
+    let nombre = document.getElementById('nombre-producto').value.trim();
+    if (tienda.esRopa) {
+        const talla = document.getElementById('talla-producto').value.trim();
+        const color = document.getElementById('color-producto').value.trim();
+        const modelo = document.getElementById('modelo-producto').value.trim();
+        const extras = [color, talla ? `Talla ${talla}` : '', modelo].filter(Boolean).join(', ');
+        if (extras) nombre = `${nombre} (${extras})`;
+    }
     productos.push({
-        nombre: document.getElementById('nombre-producto').value.trim(),
+        nombre: nombre,
         cantidad: document.getElementById('cantidad-producto').value,
         unidad: document.getElementById('unidad-producto').value,
         categoria: document.getElementById('categoria-producto').value,
@@ -1148,6 +1640,7 @@ document.getElementById('form-producto').onsubmit = (e) => {
         comprado: false
     });
     e.target.reset();
+    refrescarFormularioPorTienda();
     render();
     showToast('✅ Producto añadido', 'ok');
 };
@@ -1199,6 +1692,7 @@ function init() {
     }
     document.getElementById('input-presupuesto').value = presupuesto;
     updateBadge();
+    refrescarFormularioPorTienda();
     render();
 }
 
