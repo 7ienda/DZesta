@@ -13,28 +13,36 @@
 </style>
     <style>
         :root {
-            --bg: #fdf1f2;
-            --card: linear-gradient(135deg, #ff9a8b 0%, #ff6f91 55%, #ff5c8a 100%);
-            --card-solid: #fff;
-            --primary: #ff5c8a;
-            --primary-dark: #ec3f72;
-            --soft: #ffe3e8;
-            --input: #fff6f7;
-            --border: #ffd8de;
-            --text: #2b2233;
-            --subtext: #9a8b96;
+            --bg: #fbf1e4;
+            --card: linear-gradient(135deg, #ffcf9e 0%, #f5a353 60%, #ef8a3d 100%);
+            --card-solid: #fffdf9;
+            --primary: #f5a353;
+            --primary-dark: #e8873b;
+            --soft: #fdebd8;
+            --input: #faf3e9;
+            --border: #f0e1cc;
+            --text: #3a2e22;
+            --subtext: #ab9a86;
+            --peach: #fbdcc0;
+            --peach-text: #c1622a;
+            --mint: #d3f0dd;
+            --mint-text: #2f9160;
         }
         body.dark-mode {
-            --bg: #14101a;
-            --card: linear-gradient(135deg, #ff8a80 0%, #f4508b 55%, #d9407a 100%);
-            --card-solid: #221a29;
-            --primary: #ff7fa6;
-            --primary-dark: #ff5c8a;
-            --soft: #3a2430;
-            --input: #1c1520;
-            --border: #3a2530;
-            --text: #f8f2f5;
-            --subtext: #b6a5b1;
+            --bg: #17130f;
+            --card: linear-gradient(135deg, #ffb877 0%, #f5934a 60%, #e57a2e 100%);
+            --card-solid: #241d16;
+            --primary: #ffb877;
+            --primary-dark: #f5934a;
+            --soft: #3a2c1c;
+            --input: #1e1712;
+            --border: #3a2c1c;
+            --text: #f8f0e6;
+            --subtext: #b8a893;
+            --peach: #3a2c1c;
+            --peach-text: #ffb877;
+            --mint: #1d3327;
+            --mint-text: #6fd39c;
         }
         body {
             background-color: var(--bg);
@@ -52,7 +60,7 @@
             font-weight: 700;
             font-size: 2.4rem;
             letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #ff8a72 0%, #ff5c8a 100%);
+            background: linear-gradient(135deg, #f5a353 0%, #e8873b 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -62,9 +70,9 @@
             background: var(--card-solid);
             border: 1px solid var(--border);
             border-radius: 22px;
-            box-shadow: 0 6px 18px rgba(255,92,138,0.07);
+            box-shadow: 0 6px 16px rgba(180,130,70,0.08);
         }
-        body.dark-mode .glass-card { background: var(--card-solid); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+        body.dark-mode .glass-card { background: var(--card-solid); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
         .cat-tag { width: 5px; height: 100%; position: absolute; left: 0; top: 0; border-radius: 5px 0 0 5px; }
 
         /* ===== Barra inferior tipo isla flotante ===== */
@@ -76,7 +84,7 @@
             display: flex; justify-content: space-around; align-items: center;
             padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
             z-index: 50;
-            box-shadow: 0 10px 30px rgba(43,34,51,0.14);
+            box-shadow: 0 10px 26px rgba(180,130,70,0.16);
             max-width: 32rem;
             margin: 0 auto;
         }
@@ -106,42 +114,45 @@
         .voice-waves { display: none; align-items: center; justify-content: center; gap: 3px; height: 20px; margin: 10px 0; }
         .wave { width: 3px; height: 100%; background: var(--primary); border-radius: 10px; animation: wave-anim 0.8s infinite; }
         @keyframes wave-anim { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1.5); } }
-        .btn-mic { background: var(--soft); color: var(--primary) !important; width: 34px; height: 34px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .btn-mic { background: var(--soft); color: var(--primary-dark) !important; width: 34px; height: 34px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
         .btn-mic.listening { color: #fff !important; background: var(--primary); animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.15); } 100% { transform: translateY(-50%) scale(1); } }
-        .presupuesto-input { background: rgba(255,255,255,0.22) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.35) !important; }
-        body.dark-mode .presupuesto-input { color: white !important; }
+        .presupuesto-input { background: rgba(255,255,255,0.35) !important; color: var(--mint-text) !important; border: 1px solid rgba(0,0,0,0.06) !important; }
+        body.dark-mode .presupuesto-input { color: var(--mint-text) !important; }
 
         /* ===== Botón principal ===== */
         .btn-primary {
-            background: linear-gradient(135deg, #ff8a72 0%, #ff5c8a 100%);
-            color: #fff; font-weight: 700; border-radius: 16px;
-            box-shadow: 0 8px 18px rgba(255,92,138,0.35);
+            background: linear-gradient(135deg, #ffcf9e 0%, #f5a353 100%);
+            color: #5c3313; font-weight: 800; border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(245,163,83,0.4);
         }
 
         /* ===== Tarjetas de estadísticas ===== */
         .stat-card {
             border-radius: 18px; padding: 14px 10px;
             background: var(--card-solid); border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(255,92,138,0.06);
+            box-shadow: 0 4px 12px rgba(180,130,70,0.06);
         }
         .stat-ico {
             width: 30px; height: 30px; border-radius: 10px; margin: 0 auto 6px;
             display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
 
-        /* ===== Producto - tarjeta de la lista ===== */
-        .product-card { padding: 14px 16px 14px 20px; border-radius: 20px; }
+        /* ===== Producto - tarjeta de la lista (fondo pastel según categoría) ===== */
+        .product-card { padding: 14px 16px; border-radius: 20px; }
         .qty-chip {
             display: inline-block; padding: 3px 9px; border-radius: 999px;
-            background: var(--soft); color: var(--primary-dark); font-weight: 800;
+            background: rgba(255,255,255,0.55); font-weight: 800;
             font-size: 10.5px; white-space: nowrap;
         }
+        body.dark-mode .qty-chip { background: rgba(0,0,0,0.25); }
         .price-box {
-            background: var(--input); border: 1.5px dashed var(--border) !important;
-            border-radius: 12px; padding: 4px 8px;
+            background: rgba(255,255,255,0.5); border: 1.5px dashed rgba(0,0,0,0.12) !important;
+            border-radius: 12px; padding: 4px 6px; flex-shrink: 0;
         }
-        .chk-custom { width: 22px; height: 22px; accent-color: var(--primary); }
+        body.dark-mode .price-box { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.18) !important; }
+        .price-input-field { width: 52px; flex-shrink: 0; }
+        .chk-custom { width: 22px; height: 22px; accent-color: var(--primary-dark); flex-shrink: 0; }
 
         /* ===== Filtros / chips ===== */
         .modo-btn, .subfiltro-btn, .cat-chip-btn {
@@ -333,43 +344,47 @@
     <!-- SECCIÓN PRINCIPAL (Cesta activa) -->
     <div id="section-cesta" class="section active">
 
-        <!-- DASHBOARD PRESUPUESTO -->
-        <div class="glass-card p-6 mb-6 dash-gradient border-none relative overflow-hidden">
-            <div class="relative z-10 text-white">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-[11px] font-semibold opacity-90 mb-1 uppercase tracking-wide">Gasto Total</p>
-                        <h2 id="total-gasto" class="font-black" style="font-size:2.4rem;line-height:1.1;">$ 0.00</h2>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] font-bold opacity-90 mb-1 tracking-wider uppercase">Presupuesto</p>
-                        <input type="number" id="input-presupuesto" class="text-right font-bold w-20 rounded-xl p-1.5 text-sm border-none outline-none presupuesto-input">
-                    </div>
-                </div>
-                <div class="w-full bg-black/10 rounded-full h-1.5 mb-3">
-                    <div id="barra-presupuesto" class="bg-emerald-300 h-full rounded-full transition-all" style="width:0%"></div>
-                </div>
-                <div class="flex justify-between text-xs font-semibold opacity-90">
-                    <span id="saldo-texto">Disponible: $100.00</span>
-                    <span id="porcentaje-texto">0%</span>
-                </div>
+        <!-- DASHBOARD: Gasto / Disponible (estilo tarjetas pastel) -->
+        <div class="mb-3" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="p-4" style="background:var(--peach);border-radius:22px;">
+                <p class="text-[11px] font-bold uppercase tracking-wide mb-1" style="color:var(--peach-text);opacity:0.85;">Gasto Total ▾</p>
+                <h2 id="total-gasto" class="font-black" style="font-size:1.6rem;line-height:1.1;color:var(--peach-text);">$ 0.00</h2>
+            </div>
+            <div class="p-4" style="background:var(--mint);border-radius:22px;">
+                <p class="text-[11px] font-bold uppercase tracking-wide mb-1" style="color:var(--mint-text);opacity:0.85;">Disponible ▴</p>
+                <h2 id="saldo-monto" class="font-black" style="font-size:1.6rem;line-height:1.1;color:var(--mint-text);">$ 100.00</h2>
+            </div>
+        </div>
+
+        <!-- Presupuesto y progreso -->
+        <div class="glass-card p-4 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <p class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Presupuesto</p>
+                <input type="number" id="input-presupuesto" class="text-right font-bold w-20 rounded-xl text-sm border-none outline-none" style="padding:6px;">
+            </div>
+            <div class="w-full rounded-full h-1.5 mb-2" style="background:var(--border);">
+                <div id="barra-presupuesto" class="h-full rounded-full transition-all" style="width:0%;background:var(--primary);"></div>
+            </div>
+            <div class="flex justify-between text-xs font-semibold" style="color:var(--subtext);">
+                <span id="saldo-texto">Disponible: $100.00</span>
+                <span id="porcentaje-texto">0%</span>
             </div>
         </div>
 
         <!-- RESUMEN RÁPIDO -->
         <div class="grid grid-cols-3 gap-2 mb-4">
             <div class="stat-card text-center">
-                <div class="stat-ico" style="background:var(--soft);color:var(--primary);">🛒</div>
+                <div class="stat-ico" style="background:var(--peach);color:var(--peach-text);">🛒</div>
                 <p class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Productos</p>
                 <p class="text-xl font-black" id="stat-total">0</p>
             </div>
             <div class="stat-card text-center">
-                <div class="stat-ico" style="background:#dcfce7;color:#16a34a;">✅</div>
+                <div class="stat-ico" style="background:var(--mint);color:var(--mint-text);">✅</div>
                 <p class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Comprados</p>
                 <p class="text-xl font-black" id="stat-comprados">0</p>
             </div>
             <div class="stat-card text-center">
-                <div class="stat-ico" style="background:#ede9fe;color:#8b5cf6;">⏳</div>
+                <div class="stat-ico" style="background:var(--soft);color:var(--primary-dark);">⏳</div>
                 <p class="text-[10px] font-bold uppercase tracking-wide" style="color:var(--subtext);">Pendientes</p>
                 <p class="text-xl font-black" id="stat-pendientes">0</p>
             </div>
@@ -407,9 +422,9 @@
                     <select id="categoria-producto" onchange="refrescarUnidadesPorCategoria()" class="flex-1 min-w-[120px] p-3 text-sm"></select>
                 </div>
                 <div id="campos-ropa" class="flex flex-wrap gap-2" style="display:none;">
-                    <input type="text" id="talla-producto" placeholder="Talla (ej. M)" class="flex-1 min-w-[80px] p-3 text-sm outline-none">
-                    <input type="text" id="color-producto" placeholder="Color" class="flex-1 min-w-[80px] p-3 text-sm outline-none">
-                    <input type="text" id="modelo-producto" placeholder="Modelo (opcional)" class="flex-1 min-w-[100px] p-3 text-sm outline-none">
+                    <input type="text" id="talla-producto" placeholder="Talla (ej. M)" class="flex-1 p-3 text-sm outline-none" style="min-width:80px;">
+                    <input type="text" id="color-producto" placeholder="Color" class="flex-1 p-3 text-sm outline-none" style="min-width:80px;">
+                    <input type="text" id="modelo-producto" placeholder="Modelo (opcional)" class="flex-1 p-3 text-sm outline-none" style="min-width:100px;">
                 </div>
                 <button type="submit" class="w-full btn-primary py-3 rounded-xl">
                     <span style="margin-right:0.5rem"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:0.875em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></span>Añadir a la Cesta
@@ -433,7 +448,7 @@
             </div>
 
             <!-- SUBFILTRO (vista Todos): Todos / Pendientes / Comprados -->
-            <div class="flex gap-2 overflow-x-auto pb-0.5" id="subfiltro-todos">
+            <div class="flex gap-2 overflow-x-auto" id="subfiltro-todos" style="padding-bottom:2px;">
                 <button onclick="setFiltro('todos')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-pink-600 text-white whitespace-nowrap">Todos</button>
                 <button onclick="setFiltro('pendiente')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">⬜ Pendientes</button>
                 <button onclick="setFiltro('comprado')" class="subfiltro-btn filtro-btn px-3 py-1.5 rounded-full text-xs font-bold bg-white border border-pink-200 text-pink-500 whitespace-nowrap">✅ Comprados</button>
@@ -633,8 +648,8 @@
                 </div>
             </div>
         </div>
-        <div class="flex gap-2 mt-5">
-            <button onclick="eliminarDesdeDetalle()" class="py-3 px-4 rounded-xl border border-red-200 text-red-400 font-bold text-sm">
+        <div class="flex gap-2" style="margin-top:20px;">
+            <button onclick="eliminarDesdeDetalle()" class="py-3 rounded-xl border border-red-200 text-red-400 font-bold text-sm" style="padding-left:16px;padding-right:16px;">
                 <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:0.875em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg></span>
             </button>
             <button onclick="guardarDetalleProducto()" class="flex-1 btn-primary py-3 rounded-xl text-sm">Guardar cambios</button>
@@ -675,7 +690,7 @@
                 <input type="text" id="custom-tienda-unidades" placeholder="Kg, Und, Cajón, Atado" class="w-full p-3 rounded-xl text-sm outline-none">
             </div>
         </div>
-        <button onclick="guardarTiendaPersonalizada()" class="w-full btn-primary py-3 rounded-xl text-sm mt-5">Guardar y usar esta tienda</button>
+        <button onclick="guardarTiendaPersonalizada()" class="w-full btn-primary py-3 rounded-xl text-sm" style="margin-top:20px;">Guardar y usar esta tienda</button>
     </div>
 </div>
 
@@ -1134,24 +1149,27 @@ function renderCategoriasChips() {
     productos.forEach(p => { presentes[p.categoria] = (presentes[p.categoria] || 0) + 1; });
 
     const baseCats = (tienda.categorias || []).includes('otros') ? tienda.categorias : [...(tienda.categorias || []), 'otros'];
-    const tile = (c) => `
-        <div class="glass-card p-3 flex items-center gap-3">
-            <div class="stat-ico" style="background:${(catColors[c]||'#94a3b8')}22;color:${catColors[c]||'#94a3b8'};font-size:18px;margin:0;">${catEmojis[c] || '📦'}</div>
+    const tile = (c) => {
+        const color = catColors[c] || '#94a3b8';
+        return `
+        <div class="p-3 flex items-center gap-3" style="background:${color}2b;border-left:4px solid ${color};border-radius:18px;">
+            <div class="stat-ico" style="background:rgba(255,255,255,0.55);color:${color};font-size:18px;margin:0;">${catEmojis[c] || '📦'}</div>
             <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold truncate">${catNombres[c] || c}</p>
-                <p class="text-[10px] font-bold" style="color:var(--subtext);">${presentes[c]||0} producto${(presentes[c]||0)===1?'':'s'}</p>
+                <p class="text-[10px] font-bold" style="color:var(--text);opacity:0.6;">${presentes[c]||0} producto${(presentes[c]||0)===1?'':'s'}</p>
             </div>
         </div>`;
+    };
 
     let html = baseCats.map(tile).join('');
 
     // No se ocultan productos ya agregados: si hay categorías de otra tienda con productos, se muestran aparte
     const extras = Object.keys(presentes).filter(c => !baseCats.includes(c));
     if (extras.length > 0) {
-        html += `<p class="text-[10px] font-bold uppercase mt-1 mb-0.5" style="color:var(--subtext);grid-column:1 / -1;">Otras categorías en tu lista</p>`;
+        html += `<p class="text-[10px] font-bold uppercase" style="color:var(--subtext);grid-column:1 / -1;margin:4px 0 2px;">Otras categorías en tu lista</p>`;
         html += extras.map(tile).join('');
     }
-    cont.innerHTML = html || `<p class="text-xs opacity-60 px-1" style="grid-column:1 / -1;">Aún no hay categorías</p>`;
+    cont.innerHTML = html || `<p class="text-xs opacity-60" style="grid-column:1 / -1;padding:0 4px;">Aún no hay categorías</p>`;
 }
 
 // =================== SISTEMA DE TIENDAS (contexto de compra) ===================
@@ -1477,24 +1495,26 @@ function render() {
         }
 
         const li = document.createElement('li');
-        li.className = 'glass-card product-card flex items-center gap-3 relative overflow-hidden item-enter';
+        const colorCat = catColors[p.categoria] || '#94a3b8';
+        li.className = 'product-card flex items-center gap-3 relative overflow-hidden item-enter';
+        li.style.background = colorCat + '2b';
+        li.style.borderLeft = `4px solid ${colorCat}`;
         li.innerHTML = `
-            <div class="cat-tag" style="background:${catColors[p.categoria]||'#94a3b8'}"></div>
             <input type="checkbox" ${p.comprado?'checked':''} onchange="event.stopPropagation();toggleComprado(${i})" class="chk-custom">
             <div class="flex-1 min-w-0" onclick="abrirDetalleProducto(${i})" style="cursor:pointer;">
                 <p class="font-semibold text-sm truncate ${p.comprado?'line-through opacity-40':''}">${p.nombre}</p>
-                <div class="flex items-center gap-1.5 mt-1 text-[10px]">
+                <div class="flex items-center text-[10px]" style="gap:6px;margin-top:4px;">
                     <span class="qty-chip">🔢 ${p.cantidad} ${p.unidad}</span>
-                    <span class="font-bold" style="color:var(--subtext);">${catEmojis[p.categoria]||'📦'} ${catNombres[p.categoria]||p.categoria}</span>
+                    <span class="font-bold" style="color:var(--text);opacity:0.65;">${catEmojis[p.categoria]||'📦'} ${catNombres[p.categoria]||p.categoria}</span>
                 </div>
             </div>
             <div class="flex items-center gap-1 price-box" onclick="event.stopPropagation();">
-                <span class="text-xs font-bold" style="color:var(--primary);">$</span>
+                <span class="text-xs font-bold" style="color:var(--primary-dark);">$</span>
                 <input type="number" step="0.01" value="${p.precio||''}" placeholder="0.00"
                     oninput="actualizarPrecio(${i},this.value)"
-                    class="w-14 bg-transparent border-none text-right text-xs font-semibold outline-none">
+                    class="price-input-field bg-transparent border-none text-right text-xs font-semibold outline-none">
             </div>
-            <button onclick="event.stopPropagation();eliminarProducto(${i})" class="text-gray-300 hover:text-red-400 transition-colors text-sm ml-1">
+            <button onclick="event.stopPropagation();eliminarProducto(${i})" class="hover:text-red-400 transition-colors text-sm ml-1" style="color:var(--text);opacity:0.35;">
                 <span ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" style="width:0.75em;height:1em;display:inline-block;vertical-align:-0.125em"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></span>
             </button>`;
         listEl.appendChild(li);
@@ -1510,11 +1530,13 @@ function render() {
     document.getElementById('stat-pendientes').textContent = total - compradosCount;
 
     document.getElementById('total-gasto').textContent = `$ ${gastado.toFixed(2)}`;
+    const disponible = presupuesto - gastado;
+    document.getElementById('saldo-monto').textContent = `$ ${disponible.toFixed(2)}`;
     const porc = presupuesto > 0 ? (gastado / presupuesto) * 100 : 0;
     const barra = document.getElementById('barra-presupuesto');
     barra.style.width = Math.min(porc, 100) + '%';
-    barra.style.background = porc > 90 ? '#f87171' : porc > 70 ? '#fbbf24' : '#6ee7b7';
-    document.getElementById('saldo-texto').textContent = `Disponible: $${(presupuesto - gastado).toFixed(2)}`;
+    barra.style.background = porc > 90 ? '#f87171' : porc > 70 ? '#f5a353' : '#3fb87f';
+    document.getElementById('saldo-texto').textContent = `Disponible: $${disponible.toFixed(2)}`;
     document.getElementById('porcentaje-texto').textContent = `${Math.round(porc)}%`;
 
     localStorage.setItem('cestaV22', JSON.stringify(productos));
@@ -1545,6 +1567,8 @@ function actualizarDashboard() {
 
     document.getElementById('total-gasto').innerText =
         `$ ${gastado.toFixed(2)}`;
+    document.getElementById('saldo-monto').innerText =
+        `$ ${(presupuesto - gastado).toFixed(2)}`;
 
     const porc = presupuesto > 0
         ? (gastado / presupuesto) * 100
